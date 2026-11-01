@@ -3,10 +3,10 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, see OQ-05) |
-| Version | 0.1 (draft) |
+| Version | 0.5 (approved 2026-11-01; R-06 and SC-06 aligned with D-58) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
-| Status | Draft, awaiting owner review |
+| Status | Approved 2026-11-01 |
 
 **Legend.** *Confirmed* = approved by the owner (`D-xx`). *Assumption* = proposed by the documentation author, needs approval (`A-xx`). *Risk* = `R-xx`. *Open question* = `OQ-xx`. All registers are in [README](../README.md).
 
@@ -78,7 +78,7 @@ Example of the core behavior, after the owner enters a mileage that is 70 km abo
 | Planned, Release 3 (public-release phase) | Multi-car interface, ads (AdMob) with paid removal, store release. | PRD §3 (F-18, F-19, F-20) |
 | Out of scope | Automatic mileage reading, photos/receipts, fuel logs, garage records, EV/hybrid vehicles, web app. | PRD §3.2 |
 
-The release split is a proposal pending confirmation in the roadmap (D-16, D-17 fix the order of delivery; exact release boundaries are confirmed in document 09).
+The release split is a proposal pending confirmation in the roadmap (D-16, D-17 fix the order of delivery; exact release boundaries are confirmed in document 10, the roadmap).
 
 ## 7. Success criteria (proposed, to be confirmed)
 
@@ -89,7 +89,7 @@ The release split is a proposal pending confirmation in the roadmap (D-16, D-17 
 | SC-03 | The owner updates the mileage at least weekly during the first 8 weeks of real use. |
 | SC-04 | After signing in on a second device, the data appears within 1 minute. |
 | SC-05 | No entered data is lost in offline, crash, and sync tests. |
-| SC-06 | Spike S-01 passes, or the fallback backend is chosen, before the main build starts (D-03). |
+| SC-06 | Spike S-01 passes before the main build starts, proving Supabase Auth, row-level isolation, sync and the IPA routine (D-03, D-58). |
 
 ## 8. Guiding principles
 
@@ -103,10 +103,18 @@ The release split is a proposal pending confirmation in the roadmap (D-16, D-17 
 
 | ID | Risk | Impact | Mitigation |
 |---|---|---|---|
-| R-01 | Turso offline sync and its Clerk (JWKS) login were labeled beta in the sources reviewed. | Core sync may be unstable. | One-day spike S-01 before commitment. Fallback: Supabase (D-03). |
-| R-02 | If tokens are not scoped to one user's database, a token could reach other users' data. | Security flaw, critical for public release. | Scoped tokens/JWT templates, verified in the spike (see Security doc). |
+| R-01 | Closed 2026-11-01: Supabase was selected (D-58) and no Turso embedded replica is used. | — | — |
+| R-02 | Closed 2026-11-01: replaced by R-10, which covers row-level security instead of token scoping. | — | — |
 | R-03 | The app depends on the owner entering mileage. | Statuses go stale. | Daily reminder (D-10), inspection prompts, time-based alerts (D-11). |
 | R-04 | Default intervals vary by manufacturer. | A wrong default could mislead. | Defaults are editable, the timing belt and gearbox oil have no pre-filled value (D-09), the app states that the car's manual takes priority. |
 | R-05 | iOS sideloading with a free Apple ID expires after about 7 days (as understood, to verify). | Interrupted use on iPhone. | Android as the main device; AltStore-style refresh; paid account only for public release (D-18). |
-| R-06 | Free tiers and pricing of Clerk and Turso may change. | Cost or limits change. | Re-verify before public release. |
+| R-06 | Free tiers and pricing of Supabase, the stores and the CI runner may change. | Cost or limits change. | Re-verify before public release; R-09 covers the specific pause and quota behaviour. |
 | R-07 | Scope: sync, three languages with right-to-left layout, and later ads. | Schedule risk. | Phased releases (D-16, D-17). |
+| R-08 | The rolling reminder window stops if the app is not opened for about 30 days, and platforms cap pending local notifications. | Reminders silently end. | A final "reminders paused, open the app" notice (D-24), tested on real devices in S-01. |
+| R-09 | A free Supabase project pauses after about a week of inactivity, and the free tier caps storage and egress. | Sync fails silently until the project is resumed. | Sync on every app open keeps it active; a paused project is detected and shown as an error; paid tier only if it becomes a nuisance. |
+| R-10 | A wrong RLS policy or a stray grant exposes rows across accounts. | Security flaw, critical for public release. | Two-account integration tests in CI, no direct write grant, the service-role key never on the device (D-58, D-60, doc 09). |
+| R-11 | The 7-day free-signing expiry interrupts iPhone use, and notifications stop until the app is re-signed. | Interrupted use on iPhone. | Weekly re-signing routine (D-69), proven in S-01 item 6; local data survives and reminders are rebuilt on the next open. |
+| R-12 | Pending-notification limits, delivery jitter and reboot or force-stop behaviour differ per device. | Reminders arrive late or not at all. | Budget formula (D-63) and real-device checks in S-01 item 7. |
+| R-13 | `Intl` coverage in Hermes differs per platform. | Broken number, date or (later) Arabic formatting. | Verified in S-01; fallback to a polyfill or explicit formatters. |
+| R-14 | A discarded local edit is reported only after the pull that replaced it. | Silent loss of an edit. | The conflict notice (D-70); a manual merge UI is out of scope. |
+| R-15 | Free-tier auth email rate limits block sign-up or password reset. | Account flows fail during testing. | Tested in S-01; magic link or custom SMTP as fallback (OQ-16). |

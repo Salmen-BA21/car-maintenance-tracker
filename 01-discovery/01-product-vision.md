@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, see OQ-05) |
-| Version | 0.5 (approved 2026-11-01; R-06 and SC-06 aligned with D-58) |
+| Version | 0.6 (approved 2026-11-01; aligned with D-107 to D-111) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
 | Status | Approved 2026-11-01 |
@@ -16,7 +16,7 @@
 
 A mobile app (Android and iOS) that tracks the maintenance of petrol and diesel cars from odometer readings (D-01, D-15).
 
-The owner types the current mileage. The app recalculates, for every tracked part, how much distance and time remain before the next service. Parts are grouped in categories. The owner can always add custom parts (D-08). Service history is kept per part. Data lives on the phone and syncs to the cloud, so a new or second phone has the same data (D-02).
+The owner types the current mileage. The app recalculates, for every tracked part, how much distance and time remain before the next service. Parts are grouped in categories. The owner can always add custom parts (D-08). Service history is kept per part. Data lives on the phone from first launch; connecting an account later syncs it to the cloud for backup and use on another phone (D-02, D-107).
 
 Example of the core behavior, after the owner enters a mileage that is 70 km above the last entry:
 
@@ -64,7 +64,7 @@ Example of the core behavior, after the owner enters a mileage that is 70 km abo
 | Know what is due | Remaining distance/time per part after every update. |
 | One source of truth | Service history per part with km, date, cost, notes (D-12). |
 | Fits any car | Default parts by car profile, all editable, plus custom parts (D-08, D-09). |
-| Safe data | Offline-first on device, synced to the cloud (D-02). |
+| Safe data | Offline-first on device, with optional cloud sync and manual JSON backup (D-02, D-108). |
 | No hardware needed | Works from manual mileage entry. |
 
 **Honest trade-off:** the app cannot read the odometer by itself. Its accuracy depends on the owner entering mileage, which is why the reminder is a core feature (D-10, D-11).
@@ -73,9 +73,9 @@ Example of the core behavior, after the owner enters a mileage that is 70 km abo
 
 | Area | Scope | Where defined |
 |---|---|---|
-| In scope, Release 1 (MVP) | Login, car profile, odometer updates and history, default and custom parts, status calculation, replacement with history, first-time setup, home screen, mileage reminder, part alerts, offline storage, cloud sync, settings. English, kilometres. | PRD §3 (F-01 to F-14) |
-| Planned, Release 2 | Kilometres/miles setting, French and Arabic (right-to-left), data export, delete account and data. | PRD §3 (F-15, F-16, F-17, F-21) |
-| Planned, Release 3 (public-release phase) | Multi-car interface, ads (AdMob) with paid removal, store release. | PRD §3 (F-18, F-19, F-20) |
+| In scope, Release 1 (MVP) | Local car profile, odometer updates and history, default and custom parts, status calculation, replacement with history, first-time setup, home screen, mileage reminder, part alerts, offline storage, JSON backup, optional account connection and cloud sync, settings. English, kilometres. | PRD §3 (F-01 to F-15) |
+| Planned, Release 2 | Kilometres/miles setting, French and Arabic (right-to-left), CSV export/import design, delete account and data. | PRD §3 (F-15, F-16, F-17, F-21) |
+| Planned, Release 3 (public-release phase) | Multi-car interface, ads (AdMob) with paid removal, Google Play release. | PRD §3 (F-18, F-19, F-20) |
 | Out of scope | Automatic mileage reading, photos/receipts, fuel logs, garage records, EV/hybrid vehicles, web app. | PRD §3.2 |
 
 The release split is a proposal pending confirmation in the roadmap (D-16, D-17 fix the order of delivery; exact release boundaries are confirmed in document 10, the roadmap).
@@ -87,9 +87,11 @@ The release split is a proposal pending confirmation in the roadmap (D-16, D-17 
 | SC-01 | Updating the mileage takes under 15 seconds from opening the app. |
 | SC-02 | Part statuses match a manual calculation in all test cases defined in the QA plan. |
 | SC-03 | The owner updates the mileage at least weekly during the first 8 weeks of real use. |
-| SC-04 | After signing in on a second device, the data appears within 1 minute. |
+| SC-04 | With both devices signed in, online, and the Supabase project active, data appears on a second device within 1 minute. |
 | SC-05 | No entered data is lost in offline, crash, and sync tests. |
 | SC-06 | Spike S-01 passes before the main build starts, proving Supabase Auth, row-level isolation, sync and the IPA routine (D-03, D-58). |
+
+SC-01, SC-02, SC-04, SC-05 and SC-06 are release-validation criteria with named tests. SC-03 is a personal eight-week pilot metric, not a Release 1 shipping gate.
 
 ## 8. Guiding principles
 
@@ -98,6 +100,7 @@ The release split is a proposal pending confirmation in the roadmap (D-16, D-17 
 3. Offline-first: the app never depends on a connection to record data (D-02).
 4. Parts are data, not code, so defaults and custom parts behave the same (D-08).
 5. No feature is added without owner approval.
+6. Default intervals and alerts are reminders only: the vehicle manual and a qualified mechanic take priority.
 
 ## 9. Risks
 
@@ -118,3 +121,9 @@ The release split is a proposal pending confirmation in the roadmap (D-16, D-17 
 | R-13 | `Intl` coverage in Hermes differs per platform. | Broken number, date or (later) Arabic formatting. | Verified in S-01; fallback to a polyfill or explicit formatters. |
 | R-14 | A discarded local edit is reported only after the pull that replaced it. | Silent loss of an edit. | The conflict notice (D-70); a manual merge UI is out of scope. |
 | R-15 | Free-tier auth email rate limits block sign-up or password reset. | Account flows fail during testing. | Tested in S-01; magic link or custom SMTP as fallback (OQ-16). |
+
+## 10. Change log
+
+| Version | Date | Changes |
+|---|---|---|
+| 0.6 | 2026-11-01 | Local-first use and manual JSON backup are Release 1 scope; account connection is optional; public distribution is Google Play only; success criteria measurement and pilot status are clarified. |

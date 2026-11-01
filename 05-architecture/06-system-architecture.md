@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, OQ-05) |
-| Version | 0.3 (approved 2026-11-01) |
+| Version | 0.4 (approved 2026-11-01; local-first connection amendment) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
 | Related | [PVD](../01-discovery/01-product-vision.md), [PRD](../02-product-requirements/02-prd.md), [SRS](../03-technical-specifications/03-srs.md), [TRD](../03-technical-specifications/05-trd.md), [Database Design](../06-database/07-database-design.md), [README](../README.md) |
@@ -237,7 +237,7 @@ If `last_user_id` is empty the shell routes to sign-in. If it is set, the home s
 
 ### 5.2 First launch after install
 
-No user, no car, no rows. Migrations create the schema and seed reference data (categories, part templates). The only path forward is sign-up or sign-in, because first sign-in requires a network (BR-17). A failed sign-in leaves nothing behind: the local `users` row is created only after authentication succeeds.
+No profile, no car, no rows. Migrations create the schema and seed reference data (categories, part templates), then the app routes directly to local car setup. Account connection is optional and requires a network only when the owner chooses it. A failed connection leaves the local profile unchanged.
 
 ### 5.3 Foreground and background
 
@@ -739,6 +739,12 @@ No open questions remain in this document. OQ-15, OQ-16 and OQ-17 remain owned b
 
 ---
 
+## 16.1 Local-first connection amendment
+
+Fresh installs route to local car setup, not sign-in. A dedicated account-connection coordinator owns authentication, the pre-claim pull, backup offer, upload confirmation, validated cloud staging, atomic replacement, cancellation, and state changes. The sync engine is idle for `unlinked` and `signed_out` profiles and exposes `Not connected`; repositories and notifications continue normally.
+
+The coordinator stages a cloud dataset before requesting the write-gate transaction that replaces the local profile. A same-account reconnection resumes sync; a different account requires confirmed local-profile erasure. A read-only export service beside the repositories can export any profile state without sync involvement.
+
 ## 17. Change log
 
 | Version | Date | Changes |
@@ -746,3 +752,4 @@ No open questions remain in this document. OQ-15, OQ-16 and OQ-17 remain owned b
 | 0.1 | 2026-11-01 | First version: architectural drivers, system context and trust boundaries, component catalog with a dependency and an import-boundary matrix, execution model with the write gate and post-commit pipeline, process lifecycle, twelve runtime flows, the sync state machine with visible-state derivation, trigger table, pass algorithm, local merge rules and failure classification, notification scheduler placement and rebuild algorithm, data ownership, the error and degradation matrix, security capabilities, extension points, test seams, AR-01 to AR-15, traceability and follow-ups. |
 | 0.2 | 2026-11-01 | Revision after an owner grilling round. Sign-out is now local and immediate; the only destructive confirmation is the account-switch wipe (AR-14 rewritten), so the sign-out flush and its trigger are gone. The pipeline requests sync before the rebuild; one global change counter replaces per-table invalidation. AR-13 stores the conflict list whole and adds `notifications_built_for`. AR-16 closes the orphan question as structurally impossible and adds composite keys; AR-17 freezes the deep-link grammar; AR-18 makes the paused notice and its reserved slots conditional on reminders being enabled; AR-19 classifies retries by engine error so a full disk is not `blocked`; AR-20 makes errors cross layers as codes. The in-memory remote is now guarded by a contract suite against the real functions. |
 | 0.3 | 2026-11-01 | Approved. AR-01 to AR-20 promoted to D-74 to D-93 in the README register; OQ-14 closed; follow-ups for documents 05 and 07 marked done after their amendments landed. |
+| 0.4 | 2026-11-01 | Added the local-first startup, account-connection coordinator, idle unlinked sync state, staged cloud replacement, same-account reconnection and read-only export-service amendment. |

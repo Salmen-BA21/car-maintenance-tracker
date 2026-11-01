@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, OQ-05) |
-| Version | 0.3 (approved 2026-11-01) |
+| Version | 0.4 (approved 2026-11-01; account-claim amendment) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
 | Related | [SRS](../03-technical-specifications/03-srs.md), [TRD](../03-technical-specifications/05-trd.md), [SAD](../05-architecture/06-system-architecture.md), [Database Design](../06-database/07-database-design.md), [README](../README.md) |
@@ -93,7 +93,7 @@ The adapter in `src/sync/remote` is the only module that sees these two URLs (D-
 
 Parent-first ordering is a courtesy, not a requirement: the function runs in one transaction with deferred foreign keys, so a batch in the wrong order still commits or rolls back as a whole (document 07 §5.2). The client keeps the order anyway, because the log of a failed batch is readable only if it is deterministic.
 
-**The `users` row is the exception to "rows are written by a feature".** It is created by the auth service on first sign-in (`id = auth.uid()`, `email` from the session) and pushed like any other row. The email stays in the payload — and in the pull — because Settings must show the account when the session is expired, which is exactly the state D-28 allows the app to run in.
+**The `users` row is the exception to "rows are written by a feature".** It is created only when the owner confirms a claim of an empty cloud account (`id = auth.uid()`, `email` from the session), then pushed with the complete profile. The email stays in the payload — and in the pull — because Settings must show the linked account when its session is expired.
 
 ### 4.2 Response
 
@@ -395,6 +395,10 @@ No other new question is raised. OQ-15 to OQ-17 remain owned by documents 11, th
 
 ---
 
+## 13.1 Account-claim amendment
+
+`push_rows` and `pull_rows` remain the only API. An unlinked or signed-out local profile makes neither call. After authentication, the coordinator first calls `pull_rows(0)` before it creates or pushes a public `users` row. An empty result identifies an account that may receive the confirmed, complete parent-first initial upload in one `push_rows` transaction. Any returned profile rows identify an existing cloud profile; the app stages and validates them before local replacement, or cancels and clears the session. `profile_state` and export data never travel over this API.
+
 ## 14. Change log
 
 | Version | Date | Changes |
@@ -402,3 +406,4 @@ No other new question is raised. OQ-15 to OQ-17 remain owned by documents 11, th
 | 0.1 | 2026-11-01 | First version: the two-function surface, request and response shapes, wire conventions (timestamps, flags, nulls), authentication rules, the row-level versus call-level split, the typed error vocabulary and its HTTP/SQLSTATE mapping, the client-side schema handshake, the clock contract, notification payloads and the deep-link encoding, the contract-test scenario list, API-01 to API-12 and OQ-18. |
 | 0.2 | 2026-11-01 | Revision after an owner grilling round. The monotonic clock guard and the offset from either response are now API-13, so three-digit milliseconds are safe and the push response's `server_now` is no longer dead weight. The notification `kind` enum drops `permission`, which is a screen state and never an OS record. Kept as reviewed: `rejected` stays a bare key list (the pull is the arbiter), one call and one transaction per pass, a client-side handshake, retry on an unclassified failure, server-side response ordering, `max_seq` as a greatest-of, and the synced `users.email`. |
 | 0.3 | 2026-11-01 | Approved: API-01 to API-13 promoted to D-94 to D-106. No content change. |
+| 0.4 | 2026-11-01 | Added the pre-claim `pull_rows(0)` rule, atomic initial profile upload, unlinked-call guard, and cancellation/session-cleanup behavior. |

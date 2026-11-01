@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, OQ-05) |
-| Version | 0.5 (approved 2026-11-01; §8 aligned with D-58) |
+| Version | 0.6 (approved 2026-11-01; local-first account connection and backup aligned with D-107 to D-111) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
 | Related | [PVD](../01-discovery/01-product-vision.md), [SRS](../03-technical-specifications/03-srs.md), [README](../README.md) |
@@ -45,7 +45,7 @@ Must Have = Release 1 (MVP). Should Have = Release 2. Could Have = Release 3 / p
 
 | ID | Feature | Description | Priority | Release | Basis |
 |---|---|---|---|---|---|
-| F-01 | Authentication | Sign up and sign in with email/password and Google. Password reset for email accounts. Stay signed in. | Must | R1 | D-04 |
+| F-01 | Account connection | Optionally connect an account with email/password or Google to enable sync. Password reset for email accounts. Local use never requires an account. | Must | R1 | D-04, D-107 |
 | F-02 | Car profile | Create a car: name, fuel (petrol/diesel), timing belt or chain, manual or automatic, DPF yes/no (diesel only), current odometer. | Must | R1 | D-09, D-15 |
 | F-03 | Odometer update and history | Enter the current mileage. It must not be lower than the latest entry. List, edit, and delete the latest entry. | Must | R1 | D-05, A-02, A-03 |
 | F-04 | Default parts and categories | Default parts grouped in categories, shown according to the car profile. | Must | R1 | D-08, D-09 |
@@ -59,13 +59,13 @@ Must Have = Release 1 (MVP). Should Have = Release 2. Could Have = Release 3 / p
 | F-12 | Offline use | All core functions work without a connection. Data stored on the device. | Must | R1 | D-02 |
 | F-13 | Cloud sync | Sync data across devices and restore it on a new phone. | Must | R1 | D-02, D-03, D-23 |
 | F-14 | Settings | Reminder on/off and time, account (email, sign out), currency, app version. | Must | R1 | D-10, A-12 |
-| F-15 | Data export | Export all data as JSON/CSV. | Should | R2 | PVD §6 |
+| F-15 | Data backup/export | Export the live local maintenance dataset as JSON from Settings. CSV and import are deferred. | Must (JSON), Should (CSV/import) | R1 / R2 | D-108 |
 | F-16 | Units km/miles | Setting for display units. Storage stays in km. | Should | R2 | D-16 |
 | F-17 | French and Arabic | Translations and right-to-left layout. English is available from R1. | Should | R2 | D-16 |
 | F-21 | Delete account and data | Remove the account and all its data from the app. | Should | R2 | A-14 |
 | F-18 | Multi-car interface | Switch between several cars. The data model supports it from R1. | Could | R3 | D-21 |
 | F-19 | Ads and ad removal | AdMob ads for free users, paid option to remove them. | Could | R3 | D-17 |
-| F-20 | Store release | Google Play and App Store publication. | Could | R3 | D-18 |
+| F-20 | Store release | Google Play publication. App Store publication needs a later owner decision. | Could | R3 | D-111 |
 
 ### 3.2 Won't Have (this version)
 
@@ -80,7 +80,7 @@ Must Have = Release 1 (MVP). Should Have = Release 2. Could Have = Release 3 / p
 
 | ID | As a... | I want to... | So that... | Feature | Priority |
 |---|---|---|---|---|---|
-| US-01 | owner | sign up and sign in with email or Google | my data follows me | F-01 | Must |
+| US-01 | owner | connect an account with email or Google when I choose | my data follows me across devices | F-01 | Must |
 | US-02 | owner | create my car with its fuel, belt/chain, gearbox and DPF | the app shows only relevant parts | F-02 | Must |
 | US-03 | owner | enter the current mileage | all parts update | F-03 | Must |
 | US-04 | owner | be stopped from entering a lower mileage | I do not corrupt my data | F-03 | Must |
@@ -94,12 +94,12 @@ Must Have = Release 1 (MVP). Should Have = Release 2. Could Have = Release 3 / p
 | US-12 | owner | get alerts for time-sensitive parts | oil does not expire unnoticed | F-11 | Must |
 | US-13 | owner | use the app offline | a missing signal never blocks me | F-12 | Must |
 | US-14 | owner | find my data on a new phone | I never lose my history | F-13 | Must |
-| US-15 | owner | export my data | I keep a copy outside the app | F-15 | Should |
+| US-15 | owner | export my data as JSON | I keep an offline copy outside the app | F-15 | Must |
 | US-16 | owner | use miles and my language (English, French, Arabic) | the app matches my preference | F-16, F-17 | Should |
 
 ## 5. User journeys
 
-**J-01 First launch.** Sign in, create the car profile, enter the odometer, review the default parts, enter the last-change km and, optionally, the last-change date for the parts I know (or skip), reach the home screen.
+**J-01 First launch.** Create the car profile, enter the odometer, review the default parts, enter the last-change km and, optionally, the last-change date for the parts I know (or skip), and reach the home screen. Account connection is offered later in Settings and is never required for this journey.
 
 **J-02 Regular update.** A reminder appears, I tap it, enter the mileage, and see the updated statuses (flowchart below).
 
@@ -108,6 +108,8 @@ Must Have = Release 1 (MVP). Should Have = Release 2. Could Have = Release 3 / p
 **J-04 Add a custom part.** In a category, tap "+ Add part", enter the name and interval type, and save. The part behaves like any default part.
 
 **J-05 New phone.** Install, sign in, and wait for sync. The car, parts, and history appear.
+
+**J-06 Connect an account.** From Settings, choose email/password or Google. The app first checks the account's cloud data. If it is empty, review the number of local records to upload and confirm. If it has data, either use its validated cloud copy (after an optional JSON backup) or cancel; no automatic merge occurs.
 
 ```mermaid
 flowchart TD
@@ -142,9 +144,9 @@ flowchart TD
 | BR-12 | The timing belt appears only for cars with a belt. The timing belt and the gearbox oil have no pre-filled interval: the owner enters it from the car's manual. Until then the part shows "Set interval". | D-09 |
 | BR-13 | Default parts are shown according to the car profile (Appendix A). Hidden templates can be added later through "+ Add part". | D-09 |
 | BR-14 | Default and custom parts behave identically. Intervals of any part are editable. The car's manual takes priority over any default. | D-08, D-09 |
-| BR-15 | Every record belongs to exactly one user. Records are never visible to other users. | D-19 |
+| BR-15 | Every cloud record belongs to exactly one authenticated user and is never visible to another user. Before account connection, one device-local profile owns the local records and they are never sent to the cloud. | D-107, D-110 |
 | BR-16 | First-time setup entries and the "all serviced today" action create baseline service records. A baseline record anchors the part's status, appears as "Initial" in history, and is excluded from cost totals. | D-26 |
-| BR-17 | After the first sign-in, local reads and writes never depend on a valid authentication token. Sign-in gates only synchronization and account actions. | D-28 |
+| BR-17 | From first launch, local reads and writes never depend on a valid authentication token or an account. Account connection gates only synchronization and account actions. | D-28, D-107 |
 | BR-18 | Odometer and service dates are stored as local calendar dates (YYYY-MM-DD). Sync timestamps are UTC. Each service record stores its own currency code, and the currency setting only supplies the default for new records. | D-29 |
 | BR-19 | When the same record changes on several devices, the version with the latest update time wins. Deletions are soft deletes so they reach every device. | D-23 |
 | BR-20 | Service km and service date are independent anchors. If the km is known but the date is not, the distance countdown is shown normally and the time side shows "date unknown": such a part cannot be Due soon or Overdue by time. If the date is known but the km is not, the time countdown is shown normally and the distance side shows "km unknown": such a part cannot be Due soon or Overdue by distance. A time-only part (brake fluid, battery, wipers) without a date has the status Unknown, and so does a distance-only part without a km. | D-32, D-51 |
@@ -193,18 +195,22 @@ flowchart TD
 | AC-22 | F-10 | Given a 30-day reminder window and a 20:00 reminder, when I update the mileage at 18:00, then no reminder fires that day and the window is rebuilt from tomorrow. When 30 days pass without the app being opened, then the last notification states that reminders are paused and no further notification is delivered. |
 | AC-23 | F-05 (second sentence: R2) | Given a custom part with an 800 km interval replaced at the current odometer, then it is OK (not Due soon) and becomes Due soon at 400 km remaining. A "warn earlier" value equal to or above the interval is rejected. |
 | AC-24 | F-08 | Given setup, when I enter a last-change km for engine oil but no date, then the distance countdown is shown and the time side shows "date unknown". When I enter a date for brake fluid, then its due date is computed from that date. When I enter a date for a distance-only part but no km, then the time side is shown, the distance side shows "km unknown", and the status is Unknown. When I skip both for the battery, then it shows Unknown. |
+| AC-25 | F-01, F-13 | Given a fresh install without an account, when I create and update a car, then all data is stored and usable offline and the sync state is Not connected. |
+| AC-26 | F-01, F-13 | Given an account with no cloud rows and a local profile, when I review the upload count and confirm connection, then the complete profile uploads atomically and sync becomes Connected only after success. |
+| AC-27 | F-01, F-13 | Given an account with cloud data and a local profile, when I choose Use cloud data, then the app offers JSON backup, validates the cloud dataset, and replaces the local profile only after validation. When I cancel, neither dataset changes and the account session is cleared. |
+| AC-28 | F-15 | Given airplane mode, when I export from Settings, then the app creates a JSON backup through the system Share/Save sheet without changing local data; it contains live maintenance data and export metadata but no credentials, account email, device identifiers, sync metadata, or tombstones. |
 
 ## 8. MVP definition
 
-**Release 1 (MVP)** contains F-01 to F-14, in English, with kilometres only. It runs on Android (installed directly) and on iPhone (sideloaded IPA) (D-18). Cloud sync (F-13) runs on one Supabase project (D-03, D-58), proven by spike S-01 before the main build; OQ-01 is closed.
+**Release 1 (MVP)** contains F-01 to F-14 plus JSON backup in F-15, in English, with kilometres only. It runs on Android (installed directly) and on iPhone (sideloaded IPA) (D-18). A car is usable without an account; cloud sync (F-13) uses one Supabase project only after explicit account connection (D-03, D-58, D-107), proven by spike S-01 before the main build.
 
-**Definition of done for the MVP:** all Must Have acceptance criteria (AC-01 to AC-24, excluding the Release 2 "warn earlier" clause of AC-23) pass on a real device, offline and online, and the test cases of the QA plan (document 11) cover the remaining Must Have requirements.
+**Definition of done for the MVP:** all Must Have acceptance criteria (AC-01 to AC-28, excluding the Release 2 "warn earlier" clause of AC-23) pass on a real device, offline and online, and the test cases of the QA plan (document 11) cover the remaining Must Have requirements.
 
 ## 9. Dependencies between features
 
 | Feature | Depends on |
 |---|---|
-| F-02 Car profile | F-01 |
+| F-02 Car profile | None |
 | F-04 Default parts | F-02 |
 | F-05 Status | F-03, F-04 |
 | F-07 Replacement | F-05 |
@@ -212,7 +218,7 @@ flowchart TD
 | F-09 Home screen | F-05, F-06 |
 | F-10 Reminder | F-03, F-14 |
 | F-11 Part alerts | F-05, F-14 |
-| F-13 Sync | F-01, F-12 |
+| F-13 Sync | F-01 (only when connected), F-12 |
 | F-15, F-16, F-17, F-21 | R1 complete |
 | F-18, F-19, F-20 | R2 complete (F-19 also needs F-01 and F-13) |
 
@@ -246,3 +252,9 @@ Notes:
 - Engine oil and oil filter are tracked as separate parts that share the same default interval (matching the owner's original example). The table lists them on one line only for brevity.
 - Defaults are a proposal derived from public maintenance guidance, and the car's manual always takes priority (BR-14). Gearbox oil and timing belt have no number on purpose.
 - The profile records the gearbox type, but no default part depends on it yet (D-09).
+
+## Change log
+
+| Version | Date | Changes |
+|---|---|---|
+| 0.6 | 2026-11-01 | Account connection is optional; first launch is local-first; JSON backup is a Release 1 requirement; AC-25 to AC-28 cover local-only use, safe account connection, cloud replacement and offline export; public release is Google Play only. |

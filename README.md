@@ -1,23 +1,23 @@
 # Car Maintenance Tracker: Project Documentation
 
-Working title (see OQ-05). Documentation language: English (D-20). Version 1.5, last updated 2026-11-01.
+Working title (see OQ-05). Documentation language: English (D-20). Version 1.6, last updated 2026-11-01.
 
 ## 1. Project overview
 
-A mobile app (Android and iOS, React Native/Expo) that tracks the maintenance of petrol and diesel cars from odometer readings. The owner enters the current mileage, and the app shows the remaining distance and time for every tracked part. Parts are grouped in categories, and the owner can always add custom parts. Data is stored on the device (SQLite) and synced to the cloud. The app is built for personal use first, with an architecture that can grow to a public product later.
+A mobile app (Android and iOS, React Native/Expo) that tracks the maintenance of petrol and diesel cars from odometer readings. The owner enters the current mileage, and the app shows the remaining distance and time for every tracked part. Parts are grouped in categories, and the owner can always add custom parts. Data is stored on the device (SQLite) from first launch; connecting an account later enables Supabase backup and cross-device sync. The app is built for personal use first, with an architecture that can grow to a public product later.
 
 ## 2. Documentation index and status
 
 | # | Document | Folder | Status |
 |---|---|---|---|
-| 01 | [Product Vision Document](01-discovery/01-product-vision.md) | 01-discovery | Approved v0.5 |
-| 02 | [Product Requirements Document](02-product-requirements/02-prd.md) | 02-product-requirements | Approved v0.5 |
-| 03 | [Software Requirements Specification](03-technical-specifications/03-srs.md) | 03-technical-specifications | Approved v0.6 |
+| 01 | [Product Vision Document](01-discovery/01-product-vision.md) | 01-discovery | Approved v0.6 |
+| 02 | [Product Requirements Document](02-product-requirements/02-prd.md) | 02-product-requirements | Approved v0.6 |
+| 03 | [Software Requirements Specification](03-technical-specifications/03-srs.md) | 03-technical-specifications | Approved v0.7 |
 | 04 | UI/UX Design Specification | 04-ui-ux-design | Not started |
-| 05 | [Technical Requirements Document](03-technical-specifications/05-trd.md) | 03-technical-specifications | Approved v0.5 |
-| 06 | [System Architecture Document](05-architecture/06-system-architecture.md) | 05-architecture | Approved v0.3 |
-| 07 | [Database Design Document](06-database/07-database-design.md) | 06-database | Approved v0.5 |
-| 08 | [API Specification](07-api/08-api-specification.md) | 07-api | Approved v0.3 |
+| 05 | [Technical Requirements Document](03-technical-specifications/05-trd.md) | 03-technical-specifications | Approved v0.6 |
+| 06 | [System Architecture Document](05-architecture/06-system-architecture.md) | 05-architecture | Approved v0.4 |
+| 07 | [Database Design Document](06-database/07-database-design.md) | 06-database | Approved v0.6 |
+| 08 | [API Specification](07-api/08-api-specification.md) | 07-api | Approved v0.4 |
 | 09 | Security Requirements Document | 08-security | Not started |
 | 10 | Project Development Roadmap | 09-project-planning | Not started |
 | 11 | Testing and QA Plan | 10-testing | Not started |
@@ -34,9 +34,9 @@ Identifier scheme used in every document: `F` feature, `US` user story, `BR` bus
 | ID | Decision |
 |---|---|
 | D-01 | Mobile app for Android and iOS, built with React Native and Expo. |
-| D-02 | Local-first: SQLite on the device is the working copy. Cloud sync is part of the MVP. |
+| D-02 | Local-first: SQLite on the device is the working copy from first launch. Cloud sync is an optional MVP capability after an account is connected (D-107). |
 | D-03 | Backend: Supabase (PostgreSQL, authentication and row-level security in one project). Replaces the Turso + Clerk choice; OQ-01 is closed. |
-| D-04 | Login methods: email/password and Google. |
+| D-04 | Optional account-connection methods: email/password and Google. They enable Supabase sync and account actions; they never gate local use (D-107). |
 | D-05 | Odometer entries must not decrease. A lower value is rejected. |
 | D-06 | Replacing a part restarts its counters from the km and date of service. History is kept. Example: replaced at 320,000 km with a 70,000 km interval, at 340,000 km it shows 50,000 km left. |
 | D-07 | A part can have a distance interval, a time interval, both (whichever comes first), or be condition-based. |
@@ -50,7 +50,7 @@ Identifier scheme used in every document: `F` feature, `US` user story, `BR` bus
 | D-15 | Vehicles: petrol and diesel cars only. |
 | D-16 | The product supports English, French and Arabic (right-to-left) and km/miles, delivered after the core MVP. |
 | D-17 | Ads (AdMob) with paid removal belong to the public-release phase only. |
-| D-18 | iOS for personal use through a sideloaded IPA, Android installed directly. Store releases happen in the public-release phase. |
+| D-18 | iOS is for personal use through a sideloaded IPA; Android is installed directly. Any public release targets Google Play only unless a later owner decision funds App Store distribution (D-111). |
 | D-19 | Architecture is designed to scale (user-scoped data, UUID keys, timestamps, versioned schema, templates as data) while building for personal use first. |
 | D-20 | Documentation language is English. |
 | D-21 | Multi-car is supported by the data model from the start. The MVP interface shows one car. |
@@ -60,7 +60,7 @@ Identifier scheme used in every document: `F` feature, `US` user story, `BR` bus
 | D-25 | The active service record of a part is the one with the greatest service date (ties: greatest km). Both counters restart from it. Replaces A-10. |
 | D-26 | First-time setup entries and "all serviced today" create baseline service records. They anchor status, appear as "Initial" in history, and are excluded from cost totals. |
 | D-27 | Condition-based parts whose inspection period has elapsed are flagged "inspection due" and listed in Needs attention between Overdue and Due soon. |
-| D-28 | After the first sign-in, local reads and writes never depend on a valid token. Sign-in gates only sync and account actions. |
+| D-28 | From first launch, local reads and writes never depend on a valid token or an account. Account connection gates only sync and account actions (D-107). |
 | D-29 | Odometer and service dates are stored as local calendar dates (YYYY-MM-DD). Sync timestamps are UTC. Each service record stores its own currency code, and the currency setting only supplies the default. |
 | D-30 | Time intervals use calendar months. If the target month is shorter, the due date is its last day (31 Jan + 1 month = 28 or 29 Feb). |
 | D-31 | A lower mileage stays rejected. Replacing the instrument cluster (mileage reset) is unsupported in the MVP and documented as a limitation. Closes OQ-03. |
@@ -68,7 +68,7 @@ Identifier scheme used in every document: `F` feature, `US` user story, `BR` bus
 | D-33 | Status is derived on read and never stored. Closes OQ-06. |
 | D-34 | Hiding a part records its cause: `user` (the owner) or `profile` (a car-profile change). Restoring a profile returns only profile-hidden parts; re-adding any hidden part restores its history. Closes OQ-07. |
 | D-35 | Sync conflicts: latest `updated_at` wins, tie broken by `origin_device_id`. |
-| D-36 | `user_id` is stored on every user-owned table, including on per-user cloud databases. |
+| D-36 | Every cloud row is owned by a non-null authenticated `user_id`. The device working copy permits an unlinked local profile before connection (D-110). |
 | D-37 | Template values are copied into a part at creation and never re-applied. |
 | D-38 | Cost is stored as integer minor units plus an ISO-4217 currency code. |
 | D-39 | Cross-row validity is enforced by the write path, never by triggers. |
@@ -94,7 +94,7 @@ Identifier scheme used in every document: `F` feature, `US` user story, `BR` bus
 | D-59 | The pull cursor is a server-assigned `sync_seq` on each row, never `updated_at`; there is no `sync_log` table. |
 | D-60 | Sync is two SQL functions (`push_rows`, `pull_rows`); push is one transaction of conditional upserts; clients hold no direct write grant. |
 | D-61 | One `Clock` module applies a measured server offset; implausible future timestamps are restamped on push; the clock is never used for local dates. |
-| D-62 | Supabase Auth with email/password and Google through the system browser; session in secure storage; local start from a last-user marker; a different user wipes local data. |
+| D-62 | Supabase Auth uses email/password and Google through the system browser; the session is in secure storage. Local use needs no session. A signed-out profile retains its prior account marker for same-account reconnection; a different account requires an explicit local-profile wipe (D-109). |
 | D-63 | `expo-notifications`, local only, two Android channels, no exact-alarm permission, one idempotent rebuild, and the 64-slot budget formula of TRD §11. |
 | D-64 | Minimum Android 8.0 (API 26) and iOS 16, raised to the pinned SDK floor when higher; phones in portrait. Closes A-13. |
 | D-65 | All user-visible strings go through an `i18next` catalog from Release 1; right-to-left layout arrives with Arabic in Release 2. |
@@ -112,7 +112,7 @@ Identifier scheme used in every document: `F` feature, `US` user story, `BR` bus
 | D-77 | One composition root builds every service once; no module constructs its own singleton or reads build configuration directly. |
 | D-78 | One post-commit pipeline owns query invalidation, the newly-due notice, the sync request and the notification rebuild, in that order. Features emit events and never call the scheduler or the engine. |
 | D-79 | Release 1 executes nothing while backgrounded: no background task, no headless sync, no push. Triggers are launch, foreground, network regain, pull-to-refresh and writes while foreground. |
-| D-80 | The visible sync state is derived from network, session, dirty count and last result, never stored; precedence Offline > Error > Pending > Synced. |
+| D-80 | The visible sync state is derived from profile connection state, network, session, dirty count and last result, never stored. `Not connected` applies to unlinked or deliberately signed-out profiles; linked profiles use Offline > Error > Pending > Synced. |
 | D-81 | An outdated client refuses to sync and says so; there is no grace period. Local work continues and retries stop until the next cold start. Closes OQ-14. |
 | D-82 | The notification service is the only caller of the notification library and rebuilds from a read snapshot after first paint, never inside a transaction. |
 | D-83 | Every failure has exactly one class and one surface: field error, local message, sync banner, or blocking screen. No silent catch and no duplicate surface. |
@@ -138,6 +138,11 @@ Identifier scheme used in every document: `F` feature, `US` user story, `BR` bus
 | D-103 | The adapter never refreshes a token: on `401` it reports `SESSION_EXPIRED` and stops, and the auth service refreshes at most once per foreground. A 15 s per-request timeout applies to both functions. |
 | D-104 | A notification payload is `{v, kind, partId?}` only, with `kind` one of `reminder`, `part-alert`, `paused`; the link is `carmaint://mileage` or `carmaint://part/<encodeURIComponent(partId)>`. An unknown kind, missing id or unparsable link falls back to the home screen and is logged. |
 | D-105 | A response the client cannot validate is `RESPONSE_INVALID`: nothing is applied, the cursor stays, the pass blocks and logs. A partly valid body is never partly applied. |
+| D-107 | Local-only use is a complete Release 1 path: a fresh install creates one device-local profile and car without authentication. No local row is sent to Supabase until the owner explicitly connects an account. |
+| D-108 | Release 1 provides explicit JSON backup/export from a consistent SQLite snapshot. It works offline, uses the platform Share/Save sheet, includes live maintenance data plus export metadata, and excludes credentials, account email, device identifiers, sync metadata and tombstones. Import is deferred. |
+| D-109 | Account connection is safe and explicit. The app pulls before mutating cloud data: an empty account receives one atomic parent-first profile upload; an account with cloud data offers only Use cloud data or Cancel. Use cloud validates and stages the pull before atomically replacing the local profile; Cancel signs out and changes neither copy. |
+| D-110 | Device and cloud ownership differ intentionally. The device holds exactly one local profile and supports unlinked, connecting, linked and signed-out states. Device rows may have no `user_id` before connection; cloud rows always require the authenticated `user_id` and RLS. |
+| D-111 | Personal iPhone use is through sideloaded IPAs. Google Play is the only planned public distribution channel; App Store publication requires a future owner decision. |
 | D-106 | `Clock.now()` is monotonic — never equal to or below the previous value, bumped by 1 ms on a tie — and `clock_offset_ms` is recomputed from the freshest `server_now` of either response. Three-digit milliseconds stay. |
 
 ## 4. Assumptions
@@ -231,3 +236,4 @@ The risk register is in [PVD §9](01-discovery/01-product-vision.md) (R-01 to R-
 | 1.3 | 2026-11-01 | Document 08 (API) added as a draft (v0.1) and indexed: the two-function surface, request and response shapes, wire conventions (24-character timestamps, `0`/`1` flags, explicit nulls), token rules, the row-level versus call-level split, the typed error vocabulary with its HTTP and SQLSTATE mapping, the client-side schema handshake, the clock contract, notification payloads and deep-link encoding, the contract-test list, and API-01 to API-12. Raises OQ-18 on the read grant. |
 | 1.4 | 2026-11-01 | Document 08 revised to v0.2 after an owner grilling round: a monotonic clock guard and the offset from either response (API-13), and three notification kinds without `permission`. Confirmed unchanged: bare `rejected` keys, one call per pass, client-side handshake, retry on unclassified failures, ordered responses, greatest-of `max_seq`, synced account email. API-01 to API-13 await approval. |
 | 1.5 | 2026-11-01 | Document 08 approved at v0.3: API-01 to API-13 promoted to D-94 to D-106. OQ-18 stays open for document 09. |
+| 1.6 | 2026-11-01 | Local-first review: local use no longer requires authentication; JSON backup moves into Release 1; safe account connection, device/cloud ownership, `Not connected`, and Google Play-only public distribution are confirmed as D-107 to D-111. Documents 01, 02, 03, 05, 06, 07 and 08 were aligned. |

@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, OQ-05) |
-| Version | 0.5 (approved 2026-11-01) |
+| Version | 0.6 (approved 2026-11-01; local-profile connection amendment) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
 | Related | [PVD](../01-discovery/01-product-vision.md), [PRD](../02-product-requirements/02-prd.md), [SRS](03-srs.md), [Database Design](../06-database/07-database-design.md), [README](../README.md) |
@@ -190,8 +190,8 @@ Pure functions with no I/O, unit-tested against the PRD acceptance criteria.
 | Provider | Supabase Auth. Email/password with email confirmation, password reset (FR-005). |
 | Google | `signInWithOAuth` in the system browser with `expo-web-browser`, returning through the app's URL scheme. No native Google SDK, so no Play Services dependency and no `google-services.json`. |
 | Session storage | Supabase JS persistence adapter backed by `expo-secure-store` (Keychain/Keystore). Nothing credential-related in SQLite (NFR-024). |
-| Offline start | SQLite opens immediately. If `local_meta.last_user_id` exists it is the working user while the session loads; the sync state shows Offline until a valid session exists (AC-21). |
-| First sign-in | Requires a network (BR-17). It creates the local `users` row and `user_settings`, then queues both for push (§10.1). |
+| Offline start | SQLite opens immediately. An unlinked or signed-out profile shows Not connected; a linked profile can show Offline while its session loads. |
+| Account connection | Requires a network only when chosen. It first pulls the account; a confirmed empty account claim creates the local `users` and `user_settings` rows and queues the complete profile for push. |
 | Sign-out | Does not delete local data. Signing in as a different user wipes the local database before that user's pull, so two users' rows never coexist. |
 | Token refresh | `autoRefreshToken` with `AppState`-driven start/stop. A failed refresh sets Offline; it never blocks a local read or write (D-28). |
 | Portability | Auth is behind an `AuthProvider` interface: `getUser`, `getAccessToken`, `signIn`, `signOut`, `onChange`. Sync depends on that interface, not on Supabase types (NFR-083). |
@@ -550,6 +550,14 @@ Pass: items 1 to 5 work reliably. Items 6 to 8 decide the iOS routine, the notif
 
 ---
 
+## 18.6 Local-profile amendment
+
+The device creates a singleton local profile before authentication. Its state is `unlinked`, `connecting`, `linked`, or `signed_out`; it stores the associated account ID only when one exists. Sync is disabled unless the state is `linked`.
+
+The SQLite working copy permits `user_id` to be absent before connection and uses ordinary parent foreign keys because only one local profile exists. Supabase keeps non-null `user_id`, composite ownership keys, and RLS. On confirmed connection to an empty account, one exclusive device transaction assigns the authenticated ID to all owned rows, creates the user/settings rows, resets the cursor, and queues one complete parent-first upload. For an account with data, the app validates and stages a full pull before one transaction replaces the local profile. Cancellation signs out without changing either dataset.
+
+The export service reads one consistent SQLite snapshot and emits only live maintenance data plus export metadata. It never calls Supabase and excludes identity, device and sync data.
+
 ## 19. Change log
 
 | Version | Date | Changes |
@@ -559,3 +567,4 @@ Pass: items 1 to 5 work reliably. Items 6 to 8 decide the iOS routine, the notif
 | 0.3 | 2026-11-01 | Bundle identifier stays open (OQ-09): the product name is undecided, so the identifier is a neutral placeholder and the freeze point moves to the first build that stores real data. Added T-19 (identifier and scheme are single constants; the URL scheme is frozen now). §15 states what a later change costs. |
 | 0.4 | 2026-11-01 | Cloud schema landed in document 07 v0.4: §13 now maps calendar dates to native `date` columns and drops the `to_char` workaround; §18.5 marks the PostgreSQL DDL and the reminder-default follow-ups done. `include_in_reminders` now defaults to 1, with A-06 and FR-090 revised. Approved 2026-11-01; T-01 to T-19 promoted to D-54 to D-72. |
 | 0.5 | 2026-11-01 | Amendment after the architecture review (doc 06 v0.3). §5.5 and §10.3 store the conflict list whole as `conflicts_pending` and add `notifications_built_for`; T-17 wording follows, still D-70. §5.6 uses one change counter instead of per-table invalidation. §18.5 marks the orphan and composite-key follow-ups done after doc 07 v0.5 (DB-26); OQ-14 closed (D-81). |
+| 0.6 | 2026-11-01 | Local-first amendment: authentication is optional; the device maintains one profile state; account connection first pulls, then either atomically claims an empty account or stages and atomically replaces with cloud data. JSON export is a SQLite-only read snapshot. |

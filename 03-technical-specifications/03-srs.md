@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, OQ-05) |
-| Version | 0.6 (approved 2026-11-01; C-03 and dependencies aligned with D-58) |
+| Version | 0.7 (approved 2026-11-01; local-first connection and backup aligned with D-107 to D-111) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
 | Related | [PRD](../02-product-requirements/02-prd.md), [PVD](../01-discovery/01-product-vision.md), [README](../README.md) |
@@ -27,7 +27,9 @@ The system is a mobile application (Android, iOS) with a local database on the d
 | FR-003 | The system shall let a user sign in with a Google account. | Must | D-04 |
 | FR-004 | The system shall keep the user signed in across app restarts, including while offline. | Must | AC-15, D-02 |
 | FR-005 | The system shall provide a password reset flow for email/password accounts. | Must | D-04 (basic account need) |
-| FR-006 | After the first sign-in, local reads and writes shall not depend on a valid authentication token. Authentication shall gate only synchronization and account actions. | Must | D-28, BR-17 |
+| FR-006 | Local reads and writes shall never depend on a valid authentication token. Authentication shall gate only synchronization and account actions. | Must | D-28, BR-17 |
+| FR-007 | The system shall let a fresh installation create and use one local profile and car without authentication. | Must | D-107 |
+| FR-008 | Before any first upload, the system shall pull the chosen account's cloud data. An empty account requires explicit upload confirmation; an account with data offers only validated cloud replacement or cancellation. | Must | D-109 |
 
 ### 2.2 Car profile (F-02)
 
@@ -138,6 +140,7 @@ The system is a mobile application (Android, iOS) with a local database on the d
 | FR-104 | After signing in on a new device, the system shall download the user's data. | Must | AC-14, AC-19, US-14 |
 | FR-105 | The system shall show the sync state (synced, pending, offline, error). | Must | FR-101 |
 | FR-106 | Every syncable record shall carry a UUID key, a creation time, an update time, and a deletion time (empty while the record exists). `users.id` and local reference rows are the exceptions (D-40). | Must | D-19, D-23, D-40, NFR-082 |
+| FR-107 | The visible sync state shall be Not connected for unlinked or signed-out profiles. A sync pass shall not run until the profile is linked to an account. | Must | D-80, D-110 |
 
 ### 2.11 Settings (F-14)
 
@@ -145,19 +148,20 @@ The system is a mobile application (Android, iOS) with a local database on the d
 |---|---|---|---|
 | FR-110 | Settings shall include: reminder on/off and time, account email and sign out, currency, app version. | Must | D-10, A-12 |
 | FR-111 | The currency setting shall default to the device region, be changeable, and supply the default for new service records without changing existing ones. | Must | A-12, D-29 |
+| FR-112 | Settings shall offer explicit JSON backup/export through the operating system Share/Save sheet. It shall work offline from a consistent local snapshot and shall not change data. | Must | D-108 |
 
 ### 2.12 Release 2 and 3 requirements
 
 | ID | Requirement | Priority | Refs |
 |---|---|---|---|
-| FR-120 | The system shall export all user data as JSON and CSV. | Should | F-15 |
+| FR-120 | The system shall later add CSV export and import. | Should | F-15 |
 | FR-130 | The system shall let the user choose km or miles. Values shall be stored in km and converted for display. | Should | F-16, BR-11 |
 | FR-131 | The system shall provide English, French and Arabic. | Should | F-17, D-16 |
 | FR-132 | The Arabic interface shall use a right-to-left layout. | Should | F-17 |
 | FR-140 | The system shall let the user delete their account and all associated data. | Should | F-21, A-14 |
 | FR-150 | The system shall show AdMob ads to free users. | Could | F-19, D-17 |
 | FR-151 | The system shall offer a paid option to remove ads. | Could | F-19, D-17, OQ-04 |
-| FR-152 | The system shall meet store publication requirements for Google Play and the App Store. | Could | F-20, D-18 |
+| FR-152 | The system shall meet store publication requirements for Google Play. | Could | F-20, D-111 |
 | FR-160 | The interface shall let the user switch between several cars. | Could | F-18, D-21 |
 
 ## 3. Non-functional requirements
@@ -176,7 +180,7 @@ Numeric targets are proposals (A-17) to be validated in testing.
 
 | ID | Requirement | Priority |
 |---|---|---|
-| NFR-010 | All Must Have functions except sign-up, first sign-in, and sync shall work offline. | Must |
+| NFR-010 | All Must Have functions except account connection and sync shall work offline, including first car setup and JSON export. | Must |
 | NFR-011 | Writes shall be transactional so that an app crash or kill never loses a confirmed entry or leaves a half-saved record. | Must |
 | NFR-012 | Synchronization shall be retried automatically and be safe to repeat (idempotent). | Must |
 
@@ -254,7 +258,7 @@ Numeric targets are proposals (A-17) to be validated in testing.
 | Expo SQLite, Notifications, SecureStore | Local database, local notifications, token storage | Planned |
 | Google Sign-In (via the auth provider) | Google login | Planned |
 | Google AdMob | Ads | Release 3 only (D-17) |
-| App stores (Google Play, App Store) | Publication and payments | Release 3 only (D-18) |
+| Google Play | Public publication | Release 3 only (D-111) |
 
 ## 6. Traceability: features to requirements
 

@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, OQ-05) |
-| Version | 0.5 (approved 2026-11-01) |
+| Version | 0.6 (approved 2026-11-01; local-profile ownership amendment) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
 | Related | [PVD](../01-discovery/01-product-vision.md), [PRD](../02-product-requirements/02-prd.md), [SRS](../03-technical-specifications/03-srs.md), [README](../README.md) |
@@ -939,6 +939,14 @@ Approved by the owner on 2026-11-01. The README register is authoritative; the `
 
 ---
 
+## 14.3 Local-profile ownership amendment
+
+The prior same-schema ownership rule is amended by D-110. SQLite has a device-only singleton `profile_state` with `connection_state` (`unlinked`, `connecting`, `linked`, `signed_out`) and nullable `account_user_id`. Before connection, user-owned device rows may have a null `user_id`; settings live in this local profile. Local parent relationships use ordinary foreign keys because one profile is permitted per install.
+
+Supabase remains unchanged: every cloud row has a non-null authenticated `user_id`, uses RLS, and retains the composite ownership foreign keys. Claiming an empty account assigns the authenticated ID to all device rows, creates the syncable user/settings rows, clears the cursor, and marks the complete dataset dirty in one transaction. A cloud replacement removes the complete local profile and applies a validated staged pull in one transaction; it never merges local-only rows with cloud rows.
+
+Release 1 export is a logical snapshot of live cars, profile settings, parts, odometer entries, and service records plus export metadata. It excludes tombstones, envelopes, queues, IDs used only for devices, and authentication data.
+
 ## 15. Change log
 
 | Version | Date | Changes |
@@ -948,3 +956,4 @@ Approved by the owner on 2026-11-01. The README register is authoritative; the `
 | 0.3 | 2026-11-01 | Consistency pass: §1 DB-05/DB-09 aligned with §14.1 and the basis column cites the same decisions; profile hide keeps an owner hide; home query adds the last inspection; `cars.sort_order` removed; "18 defaults" corrected to 17; date-only baseline status defined; `service_date` format check; `inspection_months` restricted to condition rows; seed conflict targets fixed; DB-17 wording; OQ-06/OQ-07 closure wording. |
 | 0.4 | 2026-11-01 | Supabase selected (D-03): §5 split into device and cloud; PostgreSQL schema added in §5.2 with `sync_seq`, RLS policies, read-only clients and the two sync functions; DB-22 to DB-25 proposed; cloud migrations are operator-applied and backward compatible (§10); account deletion is an operator step (§11); reference rows in the shared cloud are read-only. `include_in_reminders` now defaults to `1` for every part, so reminder lines cover distance-only and condition-based parts as BR-08, FR-082 and AC-10 require; A-06 and FR-090 were revised to match. Approved 2026-11-01; DB-22 to DB-24 map to D-58 to D-60 and DB-25 to D-73. |
 | 0.5 | 2026-11-01 | Amendment after the architecture review. §4.10 stores the conflict list whole as `conflicts_pending` (JSON `{table, id, label}`) and adds `notifications_built_for`; the `conflicts_since_notice` counter is gone. DB-26 adds `UNIQUE (id, user_id)` on `cars` and `parts` and composite `(parent_id, user_id)` foreign keys on `parts`, `odometer_entries` and `service_records`, in §4 and §5.2 alike, so orphans and cross-owner references fail loudly instead of needing a repair rule. OQ-01 closed; the intro no longer treats PostgreSQL as a fallback. |
+| 0.6 | 2026-11-01 | Added the D-110 device/cloud ownership split, singleton `profile_state`, atomic profile claim and replacement, and Release 1 logical-export definition. |

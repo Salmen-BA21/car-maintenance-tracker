@@ -1,6 +1,6 @@
 # API · Archived sections
 
-Change log and traceability tables moved out of the default reading path. Not needed to implement; read for audit history only. Source document: `07-api/08-api-specification.md`.
+Change log and traceability tables moved out of the default reading path. Not needed to implement; read for audit history only. Source document: `docs/07-api/08-api-specification.md`.
 
 ## 11. Traceability
 

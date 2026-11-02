@@ -6,7 +6,7 @@
 | Version | 0.6 (approved 2026-11-01; local-profile ownership amendment) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
-| Related | [PVD](../01-discovery/01-product-vision.md), [PRD](../02-product-requirements/02-prd.md), [SRS](../03-technical-specifications/03-srs.md), [README](../README.md) |
+| Related | [PVD](../01-discovery/01-product-vision.md), [PRD](../02-product-requirements/02-prd.md), [SRS](../03-technical-specifications/03-srs.md), [README](../../README.md) |
 
 **Conventions.** `FR-xxx` and `NFR-xxx` come from the SRS, `BR-xx` and `D-xx` from the PRD and README. `DB-xx` is this document's schema label; every one maps to a confirmed decision in the README, `D-33` onward (§14.1). Table and column names are the canonical names used by document 08 (API) and the code.
 

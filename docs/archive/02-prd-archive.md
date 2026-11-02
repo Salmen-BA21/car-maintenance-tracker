@@ -1,6 +1,6 @@
 # PRD · Archived sections
 
-Change log and traceability tables moved out of the default reading path. Not needed to implement; read for audit history only. Source document: `02-product-requirements/02-prd.md`.
+Change log and traceability tables moved out of the default reading path. Not needed to implement; read for audit history only. Source document: `docs/02-product-requirements/02-prd.md`.
 
 ## Change log
 

@@ -1,6 +1,6 @@
 # SRS · Archived sections
 
-Change log and traceability tables moved out of the default reading path. Not needed to implement; read for audit history only. Source document: `03-technical-specifications/03-srs.md`.
+Change log and traceability tables moved out of the default reading path. Not needed to implement; read for audit history only. Source document: `docs/03-technical-specifications/03-srs.md`.
 
 ## 6. Traceability: features to requirements
 

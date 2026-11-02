@@ -66,7 +66,7 @@ Pass criteria: items 1 to 5 work reliably. Items 6 to 8 decide the iOS routine, 
 
 ## 7. Risks
 
-The risk register is in [PVD §9](01-discovery/01-product-vision.md) (R-01 to R-15; R-01 and R-02 are closed).
+The risk register is in [PVD §9](docs/01-discovery/01-product-vision.md) (R-01 to R-15; R-01 and R-02 are closed).
 
 ## 8. Notes for the reviewer
 

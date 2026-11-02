@@ -28,15 +28,15 @@ Supabase was selected on 2026-11-01 (D-03 amended), so the cloud is PostgreSQL a
 
 Ids stay `text` (D-40); writing `user_id = auth.uid()::text` keeps that rule without changing a column type. Foreign keys are `DEFERRABLE INITIALLY DEFERRED` so a pull applies parent-first in one transaction regardless of row order.
 
-> Cloud DDL block 1: see [`schema/cloud.sql`](../../schema/cloud.sql) (part 1).
+> Cloud DDL block 1: see [`schema/cloud.sql`](../../../schema/cloud.sql) (part 1).
 
 Every index of §4 is recreated unchanged, plus one per synced table for the pull:
 
-> Cloud DDL block 2: see [`schema/cloud.sql`](../../schema/cloud.sql) (part 2).
+> Cloud DDL block 2: see [`schema/cloud.sql`](../../../schema/cloud.sql) (part 2).
 
 **Isolation and write surface.** RLS is on for every table. Reference rows are readable by all authenticated users and writable by none; `users` is scoped to its own id.
 
-> Cloud DDL block 3: see [`schema/cloud.sql`](../../schema/cloud.sql) (part 3).
+> Cloud DDL block 3: see [`schema/cloud.sql`](../../../schema/cloud.sql) (part 3).
 
 **The two functions.** These are the whole cloud write and read surface (DB-24). Their bodies live in `supabase/migrations`, with the code.
 
@@ -51,7 +51,7 @@ Every index of §4 is recreated unchanged, plus one per synced table for the pul
 2. Set `user_id` from `auth.uid()::text` and reject any row that carries a different value. **This check is the security boundary**: the function runs as definer and therefore bypasses RLS.
 3. Upsert conditionally, stamping `sync_seq = nextval('sync_seq_seq')` only when the row is applied:
 
-> Cloud DDL block 4: see [`schema/cloud.sql`](../../schema/cloud.sql) (part 4).
+> Cloud DDL block 4: see [`schema/cloud.sql`](../../../schema/cloud.sql) (part 4).
 
 4. Return the ids the statement actually returned as `applied`; everything else is `rejected`. Replay is a no-op because a rejected row changes nothing and a repeated applied row fails the predicate.
 

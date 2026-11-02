@@ -30,8 +30,8 @@ Also D-69 and D-111 (iOS sideload, Play only) if you test on iPhone.
 ## 3. Docs: what to read and what to skip for MVP work
 
 Read (about 100 KB, roughly a third of the docs):
-- PRD (all four parts), SRS `01-functional`, `01-discovery` only if scope is unclear
-- DB parts 01 to 04 (`06-database/07-database-design/`)
+- PRD (all four parts), SRS `01-functional`, `docs/01-discovery` only if scope is unclear
+- DB parts 01 to 04 (`docs/06-database/07-database-design/`)
 - TRD parts 01, 02, 05 and the notifications section of 04
 - SAD part 01 (layers and component catalog)
 - `decisions.md`, using only the IDs listed under Keep and Simplify

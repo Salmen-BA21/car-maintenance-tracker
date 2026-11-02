@@ -6,7 +6,7 @@
 | Version | 0.6 (approved 2026-11-01; local-first account connection and backup aligned with D-107 to D-111) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
-| Related | [PVD](../01-discovery/01-product-vision.md), [SRS](../03-technical-specifications/03-srs.md), [README](../README.md) |
+| Related | [PVD](../01-discovery/01-product-vision.md), [SRS](../03-technical-specifications/03-srs.md), [README](../../README.md) |
 
 **Legend.** `D-xx` confirmed decision, `A-xx` assumption needing approval, `OQ-xx` open question, `F-xx` feature, `US-xx` user story, `BR-xx` business rule, `AC-xx` acceptance criterion. Registers are in the README.
 

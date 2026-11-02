@@ -8,7 +8,7 @@
 | Owner | Salmen Ben Ammar |
 | Status | Approved 2026-11-01 |
 
-**Legend.** *Confirmed* = approved by the owner (`D-xx`). *Assumption* = proposed by the documentation author, needs approval (`A-xx`). *Risk* = `R-xx`. *Open question* = `OQ-xx`. All registers are in [README](../README.md).
+**Legend.** *Confirmed* = approved by the owner (`D-xx`). *Assumption* = proposed by the documentation author, needs approval (`A-xx`). *Risk* = `R-xx`. *Open question* = `OQ-xx`. All registers are in [README](../../README.md).
 
 ## 1. Product overview
 

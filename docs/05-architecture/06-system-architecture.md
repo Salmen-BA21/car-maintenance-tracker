@@ -6,7 +6,7 @@
 | Version | 0.4 (approved 2026-11-01; local-first connection amendment) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
-| Related | [PVD](../01-discovery/01-product-vision.md), [PRD](../02-product-requirements/02-prd.md), [SRS](../03-technical-specifications/03-srs.md), [TRD](../03-technical-specifications/05-trd.md), [Database Design](../06-database/07-database-design.md), [README](../README.md) |
+| Related | [PVD](../01-discovery/01-product-vision.md), [PRD](../02-product-requirements/02-prd.md), [SRS](../03-technical-specifications/03-srs.md), [TRD](../03-technical-specifications/05-trd.md), [Database Design](../06-database/07-database-design.md), [README](../../README.md) |
 
 **Conventions.** `AR-xx` labels an architectural decision in this document; the approved set maps in order onto README decisions `D-74` to `D-93`, exactly as `T-xx` became `D-54` to `D-72`. `D`, `A`, `OQ`, `FR`, `NFR`, `BR`, `C`, `R`, `AC` keep the meaning they have in the README, PRD and SRS. Paths such as `src/sync/engine.ts` name modules, not files that exist yet. No application source code is produced in the documentation phase; the snippets are illustrative contracts.
 

@@ -1,6 +1,6 @@
 # DBD · Archived sections
 
-Change log and traceability tables moved out of the default reading path. Not needed to implement; read for audit history only. Source document: `06-database/07-database-design.md`.
+Change log and traceability tables moved out of the default reading path. Not needed to implement; read for audit history only. Source document: `docs/06-database/07-database-design.md`.
 
 ## 13. Traceability
 

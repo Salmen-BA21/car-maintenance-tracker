@@ -6,7 +6,7 @@
 | Version | 0.4 (approved 2026-11-01; account-claim amendment) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
-| Related | [SRS](../03-technical-specifications/03-srs.md), [TRD](../03-technical-specifications/05-trd.md), [SAD](../05-architecture/06-system-architecture.md), [Database Design](../06-database/07-database-design.md), [README](../README.md) |
+| Related | [SRS](../03-technical-specifications/03-srs.md), [TRD](../03-technical-specifications/05-trd.md), [SAD](../05-architecture/06-system-architecture.md), [Database Design](../06-database/07-database-design.md), [README](../../README.md) |
 
 **Conventions.** `API-xx` labels a decision in this document; the approved set maps in order onto README decisions `D-94` to `D-106`. `FR`, `NFR`, `C`, `BR`, `D`, `OQ` keep their meaning from the SRS, PRD and README; `AR-xx` and `DB-xx` are the labels of documents 06 and 07. Paths such as `src/sync/remote` name modules that do not exist yet. No application source code is produced in the documentation phase: the JSON and SQL below are contracts, not implementations.
 

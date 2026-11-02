@@ -1,6 +1,6 @@
 # SAD · Archived sections
 
-Change log and traceability tables moved out of the default reading path. Not needed to implement; read for audit history only. Source document: `05-architecture/06-system-architecture.md`.
+Change log and traceability tables moved out of the default reading path. Not needed to implement; read for audit history only. Source document: `docs/05-architecture/06-system-architecture.md`.
 
 ## 15. Traceability
 

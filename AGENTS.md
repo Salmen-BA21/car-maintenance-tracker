@@ -15,7 +15,7 @@ Status: documentation phase, no application code yet. Docs 01-03, 05-08 approved
 
 ## Current scope
 
-Building the local-only MVP (R1a) first; account and sync (R1b) are deferred. For MVP work, read `MVP-SCOPE.md` and skip the sync/auth/API docs it lists (TRD part 03, SAD part 03, DB part 05, `schema/cloud.sql`, the API doc). Status of that proposal: pending owner approval.
+Building the local-only MVP (R1a) first; account and sync (R1b) are deferred. For MVP work, read `MVP-SCOPE.md` and skip the sync/auth/API docs it lists (TRD part 03, SAD part 03, DB part 05, `schema/cloud.sql`, the API doc). Split approved as D-112.
 
 ## Stack (details: 03-technical-specifications/05-trd/01-stack-targets-code.md)
 

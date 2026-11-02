@@ -1,4 +1,4 @@
-# MVP-SCOPE.md: cut-down plan (proposal, needs owner approval)
+# MVP-SCOPE.md: cut-down plan (approved 2026-11-02, see D-112 and D-113)
 
 Goal: ship a working local-only app first, then add sync. This splits the PRD's Release 1 into **R1a (local MVP, build now)** and **R1b (account + sync, later)**. Nothing in the approved docs is deleted; sync-related parts are marked deferred, not removed. Decision IDs refer to `decisions.md`.
 

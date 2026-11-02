@@ -1,0 +1,3865 @@
+{
+  "version": "2.21",
+  "children": [
+    {
+      "type": "frame",
+      "id": "v9nOr",
+      "x": 0,
+      "y": 0,
+      "name": "Status Bar",
+      "reusable": true,
+      "width": 390,
+      "height": 62,
+      "padding": [
+        0,
+        24
+      ],
+      "justifyContent": "space_between",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "FG9hL",
+          "name": "Time",
+          "fill": "$ink",
+          "content": "9:41",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "wY5aj",
+          "name": "Indicators",
+          "gap": 6,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "jdWad",
+              "name": "signal",
+              "width": 15,
+              "height": 15,
+              "icon": "signal",
+              "library": "lucide",
+              "fill": "$ink"
+            },
+            {
+              "type": "icon",
+              "id": "OxtWE",
+              "name": "wifi",
+              "width": 15,
+              "height": 15,
+              "icon": "wifi",
+              "library": "lucide",
+              "fill": "$ink"
+            },
+            {
+              "type": "icon",
+              "id": "V5ZUkv",
+              "name": "battery-full",
+              "width": 15,
+              "height": 15,
+              "icon": "battery-full",
+              "library": "lucide",
+              "fill": "$ink"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "aWltf",
+      "x": 0,
+      "y": 142,
+      "name": "S2 · Home",
+      "clip": true,
+      "width": 390,
+      "fill": "$ground",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "uUYFt",
+          "type": "ref",
+          "ref": "v9nOr",
+          "name": "Status Bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "t7JQCo",
+          "name": "Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            16,
+            20,
+            36,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "aAhHk",
+              "name": "Header",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Y7ckK",
+                  "name": "CarName",
+                  "fill": "$ink",
+                  "content": "Bertha",
+                  "fontFamily": "Inter",
+                  "fontSize": 24,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "icon",
+                  "id": "DBQYE",
+                  "name": "Settings",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "settings",
+                  "library": "lucide",
+                  "fill": "$muted"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "tuQy8",
+              "name": "Odometer",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "i3Mk1",
+                  "name": "OdoValue",
+                  "fill": "$ink",
+                  "content": "128 340 km",
+                  "fontFamily": "Inter",
+                  "fontSize": 44,
+                  "fontWeight": "700",
+                  "letterSpacing": -1
+                },
+                {
+                  "type": "text",
+                  "id": "f6ozyM",
+                  "name": "OdoHint",
+                  "fill": "$muted",
+                  "content": "Updated 3 days ago · tap value for history",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yXA36",
+              "name": "PrimaryButton",
+              "width": "fill_container",
+              "height": 50,
+              "fill": "$accent",
+              "cornerRadius": 10,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "awDLW",
+                  "name": "BtnLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Update mileage",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yRWxX",
+              "name": "NeedsAttention",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cZG9o",
+                  "name": "NAHeader",
+                  "fill": "$ink",
+                  "content": "Needs attention",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "e9aPqJ",
+                  "name": "AlertCard Oil filter",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sTjA9",
+                      "name": "AlertRow",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "P90cU",
+                          "name": "NameCell",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "y2PvO",
+                              "name": "Glyph",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "triangle-alert",
+                              "library": "lucide",
+                              "fill": "$overdue"
+                            },
+                            {
+                              "type": "text",
+                              "id": "YNJUi",
+                              "name": "PartName",
+                              "fill": "$ink",
+                              "content": "Oil filter",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "b9JFrA",
+                          "name": "Chip Overdue",
+                          "fill": "#C0322114",
+                          "cornerRadius": 10,
+                          "padding": [
+                            3,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "yS52z",
+                              "name": "ChipLabel",
+                              "fill": "$overdue",
+                              "content": "Overdue",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "TXTQQ",
+                      "name": "AlertSub",
+                      "fill": "$muted",
+                      "content": "340 km overdue since 118 000 km",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jxQnU",
+                  "name": "AlertCard Brake fluid",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "NC8k5",
+                      "name": "AlertRow",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "rKp3n",
+                          "name": "NameCell",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "EeQPX",
+                              "name": "Glyph",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "timer",
+                              "library": "lucide",
+                              "fill": "$soon"
+                            },
+                            {
+                              "type": "text",
+                              "id": "SnLPQ",
+                              "name": "PartName",
+                              "fill": "$ink",
+                              "content": "Brake fluid",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "AaHnZ",
+                          "name": "Chip Due soon",
+                          "fill": "#8A5A0014",
+                          "cornerRadius": 10,
+                          "padding": [
+                            3,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "gt65Z",
+                              "name": "ChipLabel",
+                              "fill": "$soon",
+                              "content": "Due soon",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "wRFXc",
+                      "name": "AlertSub",
+                      "fill": "$muted",
+                      "content": "21 of 30 days remaining",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "WLE3u",
+              "name": "Categories",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "BYNfv",
+                  "name": "Cat Engine",
+                  "width": "fill_container",
+                  "padding": [
+                    0,
+                    2
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "cFhxL",
+                      "name": "CatName",
+                      "fill": "$ink",
+                      "content": "Engine",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "d2s7h",
+                      "name": "Chevron",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dY7TQ",
+                  "name": "CatCard Engine",
+                  "clip": true,
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "hY5zP",
+                      "name": "Row Engine oil",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "wBQtp",
+                          "name": "RowTop",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "AfwQx",
+                              "name": "Name",
+                              "fill": "$ink",
+                              "content": "Engine oil",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "c3xr3X",
+                              "name": "Right",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "S0gD0",
+                                  "name": "Value",
+                                  "fill": "$muted",
+                                  "content": "1 660 km remaining",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CTLjK",
+                          "name": "Progress",
+                          "width": "fill_container",
+                          "height": 4,
+                          "fill": "#7878802E",
+                          "cornerRadius": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 2,
+                              "id": "njNiw",
+                              "x": 0,
+                              "y": 0,
+                              "name": "ProgressFill",
+                              "fill": "#1D7A34",
+                              "width": 267,
+                              "height": 4
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ZJ2BE",
+                      "name": "Row Oil filter",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "EBvof",
+                          "name": "RowTop",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "gWhoP",
+                              "name": "Name",
+                              "fill": "$ink",
+                              "content": "Oil filter",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Vmbs0",
+                              "name": "Right",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "oki75",
+                                  "name": "Value",
+                                  "fill": "$muted",
+                                  "content": "340 km overdue",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "rEx7S",
+                                  "name": "Chip Overdue",
+                                  "fill": "#C0322114",
+                                  "cornerRadius": 10,
+                                  "padding": [
+                                    3,
+                                    10
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "b74iC5",
+                                      "name": "ChipLabel",
+                                      "fill": "$overdue",
+                                      "content": "Overdue",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 13,
+                                      "fontWeight": "600"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "MeLu6",
+                          "name": "Progress",
+                          "width": "fill_container",
+                          "height": 4,
+                          "fill": "#7878802E",
+                          "cornerRadius": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 2,
+                              "id": "Ioixf",
+                              "x": 0,
+                              "y": 0,
+                              "name": "ProgressFill",
+                              "fill": "#C03221",
+                              "width": 322,
+                              "height": 4
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "l9loDm",
+                      "name": "Row Timing belt",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "eVCB0",
+                          "name": "RowTop",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Bh0Dp",
+                              "name": "Name",
+                              "fill": "$ink",
+                              "content": "Timing belt",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "eEYFi",
+                              "name": "Right",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "eeKHp",
+                                  "name": "Value",
+                                  "fill": "$muted",
+                                  "content": "Set interval",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "k3rPk",
+                      "name": "AddPart",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "K3JTq5",
+                          "name": "Plus",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "$accent"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fE0jL",
+                          "name": "AddLabel",
+                          "fill": "$accent",
+                          "content": "Add part",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "TGUxb",
+                  "name": "Cat Brakes",
+                  "width": "fill_container",
+                  "padding": [
+                    0,
+                    2
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ldqKD",
+                      "name": "CatName",
+                      "fill": "$ink",
+                      "content": "Brakes",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "FFZbn",
+                      "name": "Chevron",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "t3d71",
+                  "name": "CatCard Brakes",
+                  "clip": true,
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "c6fDC",
+                      "name": "Row Brake pads",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "GR4MU",
+                          "name": "RowTop",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "aEskv",
+                              "name": "Name",
+                              "fill": "$ink",
+                              "content": "Brake pads",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "p3336",
+                              "name": "Right",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "EDYPN",
+                                  "name": "Value",
+                                  "fill": "$muted",
+                                  "content": "–",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "VBPZ3",
+                      "name": "AddPart",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "cNTUl",
+                          "name": "Plus",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "$accent"
+                        },
+                        {
+                          "type": "text",
+                          "id": "L3CZCF",
+                          "name": "AddLabel",
+                          "fill": "$accent",
+                          "content": "Add part",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "AByk3",
+                  "name": "Cat Fluids",
+                  "width": "fill_container",
+                  "padding": [
+                    0,
+                    2
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "unNhh",
+                      "name": "CatName",
+                      "fill": "$ink",
+                      "content": "Fluids",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "JiCSC",
+                      "name": "Chevron",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tnAns",
+                  "name": "CatCard Fluids",
+                  "clip": true,
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "tdTuS",
+                      "name": "Row Brake fluid",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "w9fhv",
+                          "name": "RowTop",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "WclG3",
+                              "name": "Name",
+                              "fill": "$ink",
+                              "content": "Brake fluid",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "nGc5z",
+                              "name": "Right",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "I9K1E",
+                                  "name": "Value",
+                                  "fill": "$muted",
+                                  "content": "21 days",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "lhg9u",
+                          "name": "Progress",
+                          "width": "fill_container",
+                          "height": 4,
+                          "fill": "#7878802E",
+                          "cornerRadius": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 2,
+                              "id": "W32CU",
+                              "x": 0,
+                              "y": 0,
+                              "name": "ProgressFill",
+                              "fill": "#8A5A00",
+                              "width": 97,
+                              "height": 4
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "NnRb6",
+                      "name": "AddPart",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Ya2D0",
+                          "name": "Plus",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "$accent"
+                        },
+                        {
+                          "type": "text",
+                          "id": "AwePY",
+                          "name": "AddLabel",
+                          "fill": "$accent",
+                          "content": "Add part",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "y4aH5",
+                  "name": "Cat Tires",
+                  "width": "fill_container",
+                  "padding": [
+                    0,
+                    2
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "t87Ww",
+                      "name": "CatName",
+                      "fill": "$ink",
+                      "content": "Tires",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "rlj10",
+                      "name": "Chevron",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "T5BB2s",
+                  "name": "CatCard Tires",
+                  "clip": true,
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bSP3o",
+                      "name": "Row Traction tires",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "xsrL6",
+                          "name": "RowTop",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "fZ66N",
+                              "name": "Name",
+                              "fill": "$ink",
+                              "content": "Traction tires",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "QOz4x",
+                              "name": "Right",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "nwvOD",
+                                  "name": "Value",
+                                  "fill": "$muted",
+                                  "content": "21 000 km remaining",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "tJCMg",
+                          "name": "Progress",
+                          "width": "fill_container",
+                          "height": 4,
+                          "fill": "#7878802E",
+                          "cornerRadius": 2,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 2,
+                              "id": "LLeG9",
+                              "x": 0,
+                              "y": 0,
+                              "name": "ProgressFill",
+                              "fill": "#1D7A34",
+                              "width": 97,
+                              "height": 4
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gGqGg",
+                      "name": "AddPart",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "o73R9",
+                          "name": "Plus",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "$accent"
+                        },
+                        {
+                          "type": "text",
+                          "id": "IVLgC",
+                          "name": "AddLabel",
+                          "fill": "$accent",
+                          "content": "Add part",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "QZUOq",
+      "x": 470,
+      "y": 142,
+      "name": "S · Mileage update",
+      "clip": true,
+      "width": 390,
+      "fill": "$ground",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "F5qnZ",
+          "type": "ref",
+          "ref": "v9nOr",
+          "name": "Status Bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "cyhM0",
+          "name": "S · Mileage update content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            12,
+            20,
+            36,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "EwY1w",
+              "name": "Back",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "hWref",
+                  "name": "BackIcon",
+                  "width": 26,
+                  "height": 26,
+                  "icon": "chevron-left",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "text",
+                  "id": "L4vjF",
+                  "name": "BackLabel",
+                  "fill": "$ink",
+                  "content": "Home",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bVjN4",
+              "name": "Latest",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "P5sET",
+                  "name": "LatestLabel",
+                  "fill": "$muted",
+                  "content": "Latest entry",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "Amjtf",
+                  "name": "LatestValue",
+                  "fill": "$ink",
+                  "content": "128 340 km",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "mI1a7",
+              "name": "Typed",
+              "fill": "$ink",
+              "content": "131 050",
+              "fontFamily": "Inter",
+              "fontSize": 56,
+              "fontWeight": "700",
+              "letterSpacing": -1.5
+            },
+            {
+              "type": "frame",
+              "id": "iietk",
+              "name": "Keypad",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 14,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "s30BsR",
+                  "name": "KeyRow",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "UZdNb",
+                      "name": "Key 7",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "MORWK",
+                          "name": "Digit",
+                          "fill": "$ink",
+                          "content": "7",
+                          "fontFamily": "Inter",
+                          "fontSize": 26,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "N1kbw",
+                      "name": "Key 8",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "GLCfe",
+                          "name": "Digit",
+                          "fill": "$ink",
+                          "content": "8",
+                          "fontFamily": "Inter",
+                          "fontSize": 26,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "o7bz9",
+                      "name": "Key 9",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "YN9GL",
+                          "name": "Digit",
+                          "fill": "$ink",
+                          "content": "9",
+                          "fontFamily": "Inter",
+                          "fontSize": 26,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LSNkm",
+                  "name": "KeyRow",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Z6vBX",
+                      "name": "Key 4",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "UEaiG",
+                          "name": "Digit",
+                          "fill": "$ink",
+                          "content": "4",
+                          "fontFamily": "Inter",
+                          "fontSize": 26,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "KbANk",
+                      "name": "Key 5",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "vTNb7",
+                          "name": "Digit",
+                          "fill": "$ink",
+                          "content": "5",
+                          "fontFamily": "Inter",
+                          "fontSize": 26,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "RLUdr",
+                      "name": "Key 6",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "EvRTq",
+                          "name": "Digit",
+                          "fill": "$ink",
+                          "content": "6",
+                          "fontFamily": "Inter",
+                          "fontSize": 26,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "t5nubl",
+                  "name": "KeyRow",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "l3XbK1",
+                      "name": "Key 1",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ktlqT",
+                          "name": "Digit",
+                          "fill": "$ink",
+                          "content": "1",
+                          "fontFamily": "Inter",
+                          "fontSize": 26,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hXMqi",
+                      "name": "Key 2",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "QJ2XQ",
+                          "name": "Digit",
+                          "fill": "$ink",
+                          "content": "2",
+                          "fontFamily": "Inter",
+                          "fontSize": 26,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "IfIOy",
+                      "name": "Key 3",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "B4ByxT",
+                          "name": "Digit",
+                          "fill": "$ink",
+                          "content": "3",
+                          "fontFamily": "Inter",
+                          "fontSize": 26,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "h9w0df",
+                  "name": "KeyRow",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "KZnop",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Key blank",
+                      "enabled": false,
+                      "width": "fill_container(0)",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mf832",
+                      "name": "Key 0",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qdp5w",
+                          "name": "Digit",
+                          "fill": "$ink",
+                          "content": "0",
+                          "fontFamily": "Inter",
+                          "fontSize": 26,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "X3YcLd",
+                      "name": "Key del",
+                      "width": "fill_container",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "DBYKP",
+                          "name": "DelIcon",
+                          "width": 24,
+                          "height": 24,
+                          "icon": "delete",
+                          "library": "lucide",
+                          "fill": "$ink"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "a0Eod",
+              "name": "PrimaryButton Save",
+              "width": "fill_container",
+              "height": 50,
+              "fill": "$accent",
+              "cornerRadius": 10,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "SdUk5",
+                  "name": "BtnLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Save",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "t0Roya",
+      "x": 940,
+      "y": 142,
+      "name": "S4 · Part detail",
+      "clip": true,
+      "width": 390,
+      "fill": "$ground",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "YQPnl",
+          "type": "ref",
+          "ref": "v9nOr",
+          "name": "Status Bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "Qst9D",
+          "name": "S · Part detail content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            12,
+            20,
+            36,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "gh8BL",
+              "name": "Back",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "LkNdz",
+                  "name": "BackIcon",
+                  "width": 26,
+                  "height": 26,
+                  "icon": "chevron-left",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "text",
+                  "id": "EPxCZ",
+                  "name": "BackLabel",
+                  "fill": "$ink",
+                  "content": "Home",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RdbP2",
+              "name": "PartHeader",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "b5HjE",
+                  "name": "PartName",
+                  "fill": "$ink",
+                  "content": "Oil filter",
+                  "fontFamily": "Inter",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "bLnab",
+                  "name": "PartCat",
+                  "fill": "$muted",
+                  "content": "Engine",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "G0tq9",
+              "name": "StatusChip",
+              "fill": "#C0322114",
+              "cornerRadius": 10,
+              "gap": 8,
+              "padding": [
+                6,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "XWuXK",
+                  "name": "ChipIcon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "triangle-alert",
+                  "library": "lucide",
+                  "fill": "$overdue"
+                },
+                {
+                  "type": "text",
+                  "id": "w90Ayu",
+                  "name": "ChipLabel",
+                  "fill": "$overdue",
+                  "content": "Overdue",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VN2Z4",
+              "name": "Values",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "lHP8z",
+                  "name": "KMValue",
+                  "fill": "$overdue",
+                  "content": "340 km overdue",
+                  "fontFamily": "Inter",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "MMlea",
+                  "name": "DaysValue",
+                  "fill": "$ink",
+                  "content": "date unknown",
+                  "fontFamily": "Inter",
+                  "fontSize": 22,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Th3tH",
+                  "name": "ValuesHint",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Km tracked from 118 000 km · add the service date to start the time countdown",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hRQtC",
+              "name": "ProgressRow",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "UL5AK",
+                  "name": "Progress",
+                  "width": "fill_container",
+                  "height": 4,
+                  "fill": "#7878802E",
+                  "cornerRadius": 2,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "Bjb7e",
+                      "x": 0,
+                      "y": 0,
+                      "name": "ProgressFill",
+                      "fill": "$overdue",
+                      "width": 300,
+                      "height": 4
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "nNKxc",
+                  "name": "PctLabel",
+                  "fill": "$muted",
+                  "content": "0 %",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "AVdAE",
+              "name": "InfoCard",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Pg7N8",
+                  "name": "Row Interval",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "m1jvT",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "Interval",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LWO9F",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "YClBi",
+                          "name": "RowValue",
+                          "fill": "$muted",
+                          "content": "10 000 km · 12 months",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "eKjtE",
+                          "name": "Chevron",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ryWfm",
+                  "name": "Row Alerts",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GFf2a",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "Alerts",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "YIxpS",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "men2K",
+                          "name": "RowValue",
+                          "fill": "$muted",
+                          "content": "On",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "AfCv9",
+                          "name": "Chevron",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mi2VT",
+                  "name": "Row Last replaced",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Z9VqE",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "Last replaced",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jzSnx",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "zxk8D",
+                          "name": "RowValue",
+                          "fill": "$muted",
+                          "content": "118 000 km · 01 Jul 2025",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "SPjg5",
+                          "name": "Chevron",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "H31CgN",
+              "name": "PrimaryButton",
+              "width": "fill_container",
+              "height": 50,
+              "fill": "$accent",
+              "cornerRadius": 10,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "uF8WN",
+                  "name": "BtnLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Mark as replaced",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "k5hpUl",
+              "name": "History",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Kgbke",
+                  "name": "HistHeader",
+                  "fill": "$ink",
+                  "content": "History",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "i71eOP",
+                  "name": "HistCard",
+                  "clip": true,
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "stJn9",
+                      "name": "HistRow 01 Jul 2025",
+                      "width": "fill_container",
+                      "padding": [
+                        14,
+                        16
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "oYujv",
+                          "name": "HistLeft",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "e03r9",
+                              "name": "HistDate",
+                              "fill": "$ink",
+                              "content": "01 Jul 2025",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "U3hUni",
+                              "name": "HistKm",
+                              "fill": "$muted",
+                              "content": "118 000 km",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "cjeH0",
+                          "name": "InitialChip",
+                          "fill": "#7878801F",
+                          "cornerRadius": 10,
+                          "padding": [
+                            3,
+                            10
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "lBhXp",
+                              "name": "ChipLabel",
+                              "fill": "$muted",
+                              "content": "Initial",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hYCY6",
+                      "name": "HistRow 02 Jul 2024",
+                      "width": "fill_container",
+                      "padding": [
+                        14,
+                        16
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "mSv4p",
+                          "name": "HistLeft",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "QAmZB",
+                              "name": "HistDate",
+                              "fill": "$ink",
+                              "content": "02 Jul 2024",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "wBwI6",
+                              "name": "HistKm",
+                              "fill": "$muted",
+                              "content": "114 500 km · 42.00 €",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gbHIO",
+                      "name": "HistFootRow",
+                      "width": "fill_container",
+                      "padding": [
+                        14,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "aw41w",
+                          "name": "HistFoot",
+                          "fill": "$muted",
+                          "content": "Cost totals exclude Initial (baseline) records",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "w8B41S",
+      "x": 1410,
+      "y": 142,
+      "name": "S · Setup · Car",
+      "clip": true,
+      "width": 390,
+      "fill": "$ground",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "rrJCn",
+          "type": "ref",
+          "ref": "v9nOr",
+          "name": "Status Bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "FeYze",
+          "name": "S · Setup · Car content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            16,
+            20,
+            36,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "TXjZu",
+              "name": "Title",
+              "fill": "$ink",
+              "content": "Add your car",
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "V0QkQ",
+              "name": "Form",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "gvNaD",
+                  "name": "Field Name",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "a2JFE",
+                      "name": "Label",
+                      "fill": "$muted",
+                      "content": "Name *",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cLueg",
+                      "name": "TextField",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 10,
+                      "padding": [
+                        14,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WzHmE",
+                          "name": "Input",
+                          "fill": "$muted",
+                          "content": "Nickname you'll recognise",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fWeZ7",
+                  "name": "Field Fuel",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XPDfo",
+                      "name": "Label",
+                      "fill": "$muted",
+                      "content": "Fuel *",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "UyVUB",
+                      "name": "Segmented",
+                      "width": "fill_container",
+                      "fill": "#7676801F",
+                      "cornerRadius": 10,
+                      "gap": 2,
+                      "padding": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "F6fIQx",
+                          "name": "Seg Petrol",
+                          "width": "fill_container",
+                          "height": 36,
+                          "fill": "#00000000",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "yB2lq",
+                              "name": "SegLabel",
+                              "fill": "$muted",
+                              "content": "Petrol",
+                              "fontFamily": "Inter",
+                              "fontSize": 15
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CfKhL",
+                          "name": "Seg Diesel",
+                          "width": "fill_container",
+                          "height": 36,
+                          "fill": "$surface",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "w5YEG",
+                              "name": "SegLabel",
+                              "fill": "$ink",
+                              "content": "Diesel",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "sDl3W",
+                  "name": "Field Timing drive",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "PzGY6",
+                      "name": "Label",
+                      "fill": "$muted",
+                      "content": "Timing drive *",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WWYX7",
+                      "name": "Segmented",
+                      "width": "fill_container",
+                      "fill": "#7676801F",
+                      "cornerRadius": 10,
+                      "gap": 2,
+                      "padding": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "B6JyEb",
+                          "name": "Seg Belt",
+                          "width": "fill_container",
+                          "height": 36,
+                          "fill": "$surface",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "lLIfV",
+                              "name": "SegLabel",
+                              "fill": "$ink",
+                              "content": "Belt",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "mMaHD",
+                          "name": "Seg Chain",
+                          "width": "fill_container",
+                          "height": 36,
+                          "fill": "#00000000",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "i99QJa",
+                              "name": "SegLabel",
+                              "fill": "$muted",
+                              "content": "Chain",
+                              "fontFamily": "Inter",
+                              "fontSize": 15
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "T3R49B",
+                  "name": "Field Gearbox",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GOqPV",
+                      "name": "Label",
+                      "fill": "$muted",
+                      "content": "Gearbox *",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "J4TWt",
+                      "name": "Segmented",
+                      "width": "fill_container",
+                      "fill": "#7676801F",
+                      "cornerRadius": 10,
+                      "gap": 2,
+                      "padding": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "rt6LE",
+                          "name": "Seg Manual",
+                          "width": "fill_container",
+                          "height": 36,
+                          "fill": "$surface",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g4ug6",
+                              "name": "SegLabel",
+                              "fill": "$ink",
+                              "content": "Manual",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "io0xJ",
+                          "name": "Seg Automatic",
+                          "width": "fill_container",
+                          "height": 36,
+                          "fill": "#00000000",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "WCS8s",
+                              "name": "SegLabel",
+                              "fill": "$muted",
+                              "content": "Automatic",
+                              "fontFamily": "Inter",
+                              "fontSize": 15
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "wVwsD",
+                  "name": "Field Diesel particulate filter",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MVN5I",
+                      "name": "Label",
+                      "fill": "$muted",
+                      "content": "Diesel particulate filter *",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PoqGQ",
+                      "name": "Segmented",
+                      "width": "fill_container",
+                      "fill": "#7676801F",
+                      "cornerRadius": 10,
+                      "gap": 2,
+                      "padding": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "U9MGUa",
+                          "name": "Seg Yes",
+                          "width": "fill_container",
+                          "height": 36,
+                          "fill": "#00000000",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "BCMqr",
+                              "name": "SegLabel",
+                              "fill": "$muted",
+                              "content": "Yes",
+                              "fontFamily": "Inter",
+                              "fontSize": 15
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "HYq6V",
+                          "name": "Seg No",
+                          "width": "fill_container",
+                          "height": 36,
+                          "fill": "$surface",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "r90O9",
+                              "name": "SegLabel",
+                              "fill": "$ink",
+                              "content": "No",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zdEvm",
+                  "name": "Field Current odometer (km)",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "quekJ",
+                      "name": "Label",
+                      "fill": "$muted",
+                      "content": "Current odometer (km) *",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PN42o",
+                      "name": "TextField",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 10,
+                      "padding": [
+                        14,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "KLhW1",
+                          "name": "Input",
+                          "fill": "$ink",
+                          "content": "128 000",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yzJ5P",
+              "name": "PrimaryButton",
+              "width": "fill_container",
+              "height": 50,
+              "fill": "$accent",
+              "cornerRadius": 10,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Qa5cP",
+                  "name": "BtnLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Create car",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "HXBVQ",
+      "x": 1880,
+      "y": 142,
+      "name": "S · Setup · Last change",
+      "clip": true,
+      "width": 390,
+      "fill": "$ground",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "IBxrj",
+          "type": "ref",
+          "ref": "v9nOr",
+          "name": "Status Bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "y9aq1U",
+          "name": "S · Setup · Last change content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            16,
+            20,
+            36,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "er2fI",
+              "name": "Title",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "When were parts last changed?",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "AwRou",
+              "name": "Sub",
+              "fill": "$muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Leave blank if you don't know — the part will show Unknown (check it). You can add values later on the part itself.",
+              "lineHeight": 1.35,
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "wuzAI",
+              "name": "Cat Engine",
+              "width": "fill_container",
+              "padding": [
+                0,
+                2
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "HMApN",
+                  "name": "CatName",
+                  "fill": "$ink",
+                  "content": "Engine",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "icon",
+                  "id": "t5e8f",
+                  "name": "Chevron",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$muted"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "eDiqq",
+              "name": "CatCard Engine",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "MHAyd",
+                  "name": "Row Engine oil",
+                  "width": "fill_container",
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WHDf9",
+                      "name": "Name",
+                      "fill": "$ink",
+                      "content": "Engine oil",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LGsCg",
+                      "name": "Fields",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "f9vKN",
+                          "name": "Mini km",
+                          "width": 78,
+                          "fill": "$ground",
+                          "cornerRadius": 8,
+                          "padding": [
+                            8,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "nsDRz",
+                              "name": "MiniText",
+                              "fill": "$muted",
+                              "content": "km",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "vphbp",
+                          "name": "Mini date",
+                          "width": 92,
+                          "fill": "$ground",
+                          "cornerRadius": 8,
+                          "padding": [
+                            8,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "RYviu",
+                              "name": "MiniText",
+                              "fill": "$muted",
+                              "content": "date",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ev4fL",
+                  "name": "Row Oil filter",
+                  "width": "fill_container",
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "koHjv",
+                      "name": "Name",
+                      "fill": "$ink",
+                      "content": "Oil filter",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tZ0vB",
+                      "name": "Fields",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Dx5Si",
+                          "name": "Mini km",
+                          "width": 78,
+                          "fill": "$ground",
+                          "cornerRadius": 8,
+                          "padding": [
+                            8,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "xm2xb",
+                              "name": "MiniText",
+                              "fill": "$muted",
+                              "content": "km",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "kCBPN",
+                          "name": "Mini date",
+                          "width": 92,
+                          "fill": "$ground",
+                          "cornerRadius": 8,
+                          "padding": [
+                            8,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "UiULN",
+                              "name": "MiniText",
+                              "fill": "$muted",
+                              "content": "date",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gney8",
+                  "name": "Row Timing belt",
+                  "width": "fill_container",
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "K9iNfq",
+                      "name": "Name",
+                      "fill": "$ink",
+                      "content": "Timing belt",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YM9F6",
+                      "name": "Note",
+                      "fill": "$muted",
+                      "content": "interval from the manual",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Vszym",
+              "name": "Cat Brakes",
+              "width": "fill_container",
+              "padding": [
+                0,
+                2
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "RnlJj",
+                  "name": "CatName",
+                  "fill": "$ink",
+                  "content": "Brakes",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "icon",
+                  "id": "wEaFz",
+                  "name": "Chevron",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$muted"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FtVES",
+              "name": "CatCard Brakes",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "BoyjS",
+                  "name": "Row Brake pads",
+                  "width": "fill_container",
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CrYta",
+                      "name": "Name",
+                      "fill": "$ink",
+                      "content": "Brake pads",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "DNv65",
+                      "name": "Note",
+                      "fill": "$muted",
+                      "content": "inspect — no countdown",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HUtwg",
+              "name": "Cat Fluids",
+              "width": "fill_container",
+              "padding": [
+                0,
+                2
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "r2mCs",
+                  "name": "CatName",
+                  "fill": "$ink",
+                  "content": "Fluids",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "icon",
+                  "id": "GsrcX",
+                  "name": "Chevron",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$muted"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "D4VYY",
+              "name": "CatCard Fluids",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tbQ64",
+                  "name": "Row Brake fluid",
+                  "width": "fill_container",
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GZ4tQ",
+                      "name": "Name",
+                      "fill": "$ink",
+                      "content": "Brake fluid",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FKryc",
+                      "name": "Fields",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "yyvQb",
+                          "name": "Mini km",
+                          "width": 78,
+                          "fill": "$ground",
+                          "cornerRadius": 8,
+                          "padding": [
+                            8,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Fzr2h",
+                              "name": "MiniText",
+                              "fill": "$muted",
+                              "content": "km",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Lh9ax",
+                          "name": "Mini date",
+                          "width": 92,
+                          "fill": "$ground",
+                          "cornerRadius": 8,
+                          "padding": [
+                            8,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "sLSvV",
+                              "name": "MiniText",
+                              "fill": "$muted",
+                              "content": "date",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "VU9y3",
+                  "name": "Row Wiper blades",
+                  "width": "fill_container",
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "V9Dl3O",
+                      "name": "Name",
+                      "fill": "$ink",
+                      "content": "Wiper blades",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fGYQd",
+                      "name": "Fields",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Jqbvq",
+                          "name": "Mini km",
+                          "width": 78,
+                          "fill": "$ground",
+                          "cornerRadius": 8,
+                          "padding": [
+                            8,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "do74m",
+                              "name": "MiniText",
+                              "fill": "$muted",
+                              "content": "km",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "WKe1s",
+                          "name": "Mini date",
+                          "width": 92,
+                          "fill": "$ground",
+                          "cornerRadius": 8,
+                          "padding": [
+                            8,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "H2cNP",
+                              "name": "MiniText",
+                              "fill": "$muted",
+                              "content": "date",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yCpjT",
+              "name": "SecondaryButton",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$btn-secondary-bg",
+              "cornerRadius": 10,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ox5FL",
+                  "name": "BulkLabel",
+                  "fill": "$ink",
+                  "content": "All serviced today",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Nx7o7",
+              "name": "BulkHint",
+              "fill": "$muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Creates a baseline 'Initial' record at the current odometer for every part.",
+              "lineHeight": 1.35,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "KSRIW",
+              "name": "PrimaryButton",
+              "width": "fill_container",
+              "height": 50,
+              "fill": "$accent",
+              "cornerRadius": 10,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "NZaj6",
+                  "name": "BtnLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Done",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "OPGIr",
+      "x": 2350,
+      "y": 142,
+      "name": "S5 · Settings",
+      "clip": true,
+      "width": 390,
+      "fill": "$ground",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "NJV2E",
+          "type": "ref",
+          "ref": "v9nOr",
+          "name": "Status Bar",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "m0SkA",
+          "name": "Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            16,
+            20,
+            36,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "QqXbE",
+              "name": "Title",
+              "fill": "$ink",
+              "content": "Settings",
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "tA4Im",
+              "name": "Group",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "JLX94",
+                  "name": "Row ReminderOn",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wMOh7",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "Daily odometer reminder",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "e1kr8",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "mFJnn",
+                          "name": "SwitchOn",
+                          "width": 46,
+                          "height": 28,
+                          "fill": "$accent",
+                          "cornerRadius": 14,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "CP8MO",
+                              "x": 20,
+                              "y": 2,
+                              "name": "Knob",
+                              "fill": "#FFFFFF",
+                              "width": 24,
+                              "height": 24
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ChtJG",
+                  "name": "Row Time",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "SwJfT",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "Time",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "A9eGDw",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "HO8P9",
+                          "name": "RowValue",
+                          "fill": "$ink",
+                          "content": "20:00",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "Q1JZV",
+                          "name": "Chevron",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mpl3H",
+              "name": "Foot",
+              "width": "fill_container",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UqTWI",
+                  "name": "FootText",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "lineHeight": 1.35,
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Fwh8E",
+              "name": "Group",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "zV6sk",
+                  "name": "Row EditCar",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iANYL",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "Bertha · edit profile",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "YlzWs",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FnpOc",
+                          "name": "RowValue",
+                          "fill": "$muted",
+                          "content": "Petrol",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "SO4UR",
+                          "name": "Chevron",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "q9EQT6",
+                  "name": "Row OdoHistory",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "e73Xy",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "Odometer history",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "J4g5Q",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "G0igQ",
+                          "name": "RowValue",
+                          "fill": "$muted",
+                          "content": "128 340 km, last edit",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "H4uljX",
+                          "name": "Chevron",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Gg8lo",
+              "name": "Group",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "He1no",
+                  "name": "Row Account",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MBy3h",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "Account",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "k91R4",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "VkfyO",
+                          "name": "RowValue",
+                          "fill": "$muted",
+                          "content": "Not connected",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "AUa4I",
+              "name": "Foot",
+              "width": "fill_container",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dTawy",
+                  "name": "FootText",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "lineHeight": 1.35,
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Z7FusH",
+              "name": "Group",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "FGdTr",
+                  "name": "Row Currency",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iKVL8",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "Currency",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "K7WTE",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xE50p",
+                          "name": "RowValue",
+                          "fill": "$ink",
+                          "content": "EUR",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "o7H7iH",
+                          "name": "Chevron",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "m3wBcJ",
+                  "name": "Row Export",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "K5hOE",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "Export backup (JSON)",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "rToWa",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "e7CuN",
+                          "name": "RowValue",
+                          "fill": "$muted",
+                          "content": "Offline",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "LxBYC",
+                          "name": "Chevron",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "iH7NV",
+                  "name": "Row Version",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "J8sWTK",
+                      "name": "RowLabel",
+                      "fill": "$ink",
+                      "content": "App version",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wiObW",
+                      "name": "RowRight",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lNmug",
+                          "name": "RowValue",
+                          "fill": "$muted",
+                          "content": "0.1.0 (12)",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "ground": {
+      "type": "color",
+      "value": "#F2F2F7"
+    },
+    "surface": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "ink": {
+      "type": "color",
+      "value": "#1C1C1E"
+    },
+    "muted": {
+      "type": "color",
+      "value": "#6C6C70"
+    },
+    "accent": {
+      "type": "color",
+      "value": "#007AFF"
+    },
+    "ok": {
+      "type": "color",
+      "value": "#1D7A34"
+    },
+    "soon": {
+      "type": "color",
+      "value": "#8A5A00"
+    },
+    "overdue": {
+      "type": "color",
+      "value": "#C03221"
+    },
+    "btn-secondary-bg": {
+      "type": "color",
+      "value": "#7676801F"
+    }
+  },
+  "fileToken": "eaafc38b-16da-4dcc-9f91-f33d609585c3"
+}

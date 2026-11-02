@@ -10,8 +10,6 @@
 
 **Legend.** *Confirmed* = approved by the owner (`D-xx`). *Assumption* = proposed by the documentation author, needs approval (`A-xx`). *Risk* = `R-xx`. *Open question* = `OQ-xx`. All registers are in [README](../README.md).
 
----
-
 ## 1. Product overview
 
 A mobile app (Android and iOS) that tracks the maintenance of petrol and diesel cars from odometer readings (D-01, D-15).
@@ -122,8 +120,12 @@ SC-01, SC-02, SC-04, SC-05 and SC-06 are release-validation criteria with named 
 | R-14 | A discarded local edit is reported only after the pull that replaced it. | Silent loss of an edit. | The conflict notice (D-70); a manual merge UI is out of scope. |
 | R-15 | Free-tier auth email rate limits block sign-up or password reset. | Account flows fail during testing. | Tested in S-01; magic link or custom SMTP as fallback (OQ-16). |
 
-## 10. Change log
+---
 
-| Version | Date | Changes |
-|---|---|---|
-| 0.6 | 2026-11-01 | Local-first use and manual JSON backup are Release 1 scope; account connection is optional; public distribution is Google Play only; success criteria measurement and pilot status are clarified. |
+## Contents
+
+This file is the index. Open only the part you need.
+
+| File | Contents | Sections | Size |
+|---|---|---|---|
+| [../archive/01-product-vision-archive.md](../archive/01-product-vision-archive.md) | Change log / traceability (archive, skip by default) | §10 | 0.3 KB |

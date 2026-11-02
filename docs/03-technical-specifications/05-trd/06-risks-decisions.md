@@ -106,4 +106,4 @@ The device creates a singleton local profile before authentication. Its state is
 
 The SQLite working copy permits `user_id` to be absent before connection and uses ordinary parent foreign keys because only one local profile exists. Supabase keeps non-null `user_id`, composite ownership keys, and RLS. On confirmed connection to an empty account, one exclusive device transaction assigns the authenticated ID to all owned rows, creates the user/settings rows, resets the cursor, and queues one complete parent-first upload. For an account with data, the app validates and stages a full pull before one transaction replaces the local profile. Cancellation signs out without changing either dataset.
 
-The export service reads one consistent SQLite snapshot and emits only live maintenance data plus export metadata. It never calls Supabase and excludes identity, device and sync data.
+The export service reads one consistent SQLite snapshot and emits maintenance data plus export metadata. Soft-deleted part rows are retained when needed to keep preserved service history referentially complete. It never calls Supabase and excludes identity, device and sync data.

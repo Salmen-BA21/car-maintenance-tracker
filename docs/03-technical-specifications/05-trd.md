@@ -3,14 +3,14 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, OQ-05) |
-| Version | 0.6 (approved 2026-11-01; local-profile connection amendment) |
+| Version | 0.7 (approved 2026-11-02; MVP implementation alignment) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
 | Related | [PVD](../01-discovery/01-product-vision.md), [PRD](../02-product-requirements/02-prd.md), [SRS](03-srs.md), [Database Design](../06-database/07-database-design.md), [README](../../README.md) |
 
 **Conventions.** `T-xx` labels a technical decision proposed in this document. On approval each one is promoted to a README decision (`D-54` onward), exactly as `DB-xx` became `D-33` to `D-53` in document 07. `D`, `A`, `OQ`, `FR`, `NFR`, `BR`, `C`, `R`, `S` and `AC` keep the meaning they have in the README, PRD and SRS. Items marked **[S-01]** are validated in the spike (§18.4).
 
-**Scope.** This document closes A-13 (minimum OS versions), chooses libraries, and defines the mechanics that turn documents 02, 03 and 07 into code: local data layer, domain core, authentication, the sync adapter, notifications, tooling and testing. It does not define component boundaries (document 06), endpoint contracts (08), the threat model (09) or release procedures (12). No application source code is produced in the documentation phase; the snippets below are illustrative contracts.
+**Scope.** This document closes A-13 (minimum OS versions), chooses libraries, and defines the mechanics that turn documents 02, 03 and 07 into code: local data layer, domain core, authentication, the sync adapter, notifications, tooling and testing. It does not define component boundaries (document 06), endpoint contracts (08), the threat model (09) or release procedures (12). The local-only MVP implementation now lives in `app/`; the snippets below remain illustrative contracts for deferred sync and release work.
 
 **Change from v0.1.** The owner selected **Supabase** on 2026-11-01: PostgreSQL, authentication and row-level security in one service, with no per-user database and no provisioning server. That replaces Turso with Clerk (D-03) and removes spike S-01's original gate. The consequences are listed in §18.1 and §18.5, and the spike is retargeted in §18.4.
 

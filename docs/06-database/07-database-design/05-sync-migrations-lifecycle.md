@@ -17,7 +17,7 @@
 | Conflict | Highest `updated_at` wins. If two versions carry the same `updated_at`, the lexicographically greater `origin_device_id` wins (DB-03). A losing local row that is still queued stays dirty and is pushed next pass; a pulled row that lost the comparison against the local row is not applied (AR-15). The losers are listed in `local_meta.conflicts_pending` for the next home-screen notice, and the list is never capped (DB-27). |
 | Deletion | `deleted_at` is set; the row ships like any other and disappears from reads (BR-19). |
 | Replay | Applying the same batch twice is a no-op: a row is written only when the incoming `(updated_at, origin_device_id)` is greater than the stored one. |
-| Child deletion | Deleting a custom part stamps the same `updated_at` and `origin_device_id` on the part and on every one of its service records, in one local transaction (FR-035, AC-17). |
+| Child deletion | Deleting a custom part soft-deletes the part in one local transaction. Its service records remain available for history and export, so the exported rows remain referentially complete (FR-035, AC-17). |
 | Local date fields | Never converted. `entry_date` and `service_date` are calendar dates the owner typed (D-29). |
 | Current odometer | Recomputed as `MAX(value_km)` after every pull, never merged as a scalar (DB-18). |
 | Tombstone retention | Kept indefinitely in Release 1. Purging requires tracking every device's last-pull position; it is deferred until there is more than one active device or the store requires it. |

@@ -55,4 +55,4 @@ The prior same-schema ownership rule is amended by D-110. SQLite has a device-on
 
 Supabase remains unchanged: every cloud row has a non-null authenticated `user_id`, uses RLS, and retains the composite ownership foreign keys. Claiming an empty account assigns the authenticated ID to all device rows, creates the syncable user/settings rows, clears the cursor, and marks the complete dataset dirty in one transaction. A cloud replacement removes the complete local profile and applies a validated staged pull in one transaction; it never merges local-only rows with cloud rows.
 
-Release 1 export is a logical snapshot of live cars, profile settings, parts, odometer entries, and service records plus export metadata. It excludes tombstones, envelopes, queues, IDs used only for devices, and authentication data.
+Release 1 export is a logical snapshot of live cars, profile settings, parts, odometer entries, and service records plus export metadata. It includes soft-deleted part rows when needed to keep preserved service history referentially complete. It excludes envelopes, queues, IDs used only for devices, and authentication data.

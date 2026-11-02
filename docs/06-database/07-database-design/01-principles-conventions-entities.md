@@ -7,7 +7,7 @@
 | ID | Principle | Basis |
 |---|---|---|
 | DB-01 | Status is derived on read and never stored. Only the facts the owner entered are persisted. | D-33, FR-046 |
-| DB-02 | Nothing is hard-deleted in normal use. Hiding and deleting are soft; a custom part's history is soft-deleted with it. A hidden part records **why** it is hidden, so a profile change can restore only what it hid. | D-34, FR-035, AC-17 |
+| DB-02 | Nothing is hard-deleted in normal use. Hiding and deleting are soft; deleting a custom part hides the part while preserving its service history for audit and export. A hidden part records **why** it is hidden, so a profile change can restore only what it hid. | D-34, FR-035, AC-17 |
 | DB-03 | Conflict order is deterministic: the latest `updated_at` wins, and the device that wrote it breaks a tie. | D-35, FR-103 |
 | DB-04 | The schema is the same on device and in the cloud, and the same for one user or many: `user_id` is always present on user rows. | D-36, FR-102 |
 | DB-05 | Template values are copied into a part at creation and never re-applied; a seed update never rewrites a user's rows. | D-37, NFR-081, BR-14 |

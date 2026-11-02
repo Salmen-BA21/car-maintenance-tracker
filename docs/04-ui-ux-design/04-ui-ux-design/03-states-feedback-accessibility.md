@@ -38,7 +38,7 @@ Gestures (from the fluid-interface rules, kept small because a utility app earns
 - Sheets are fully draggable: 1:1 tracking while dragging, release velocity handed to the spring (§3.4), grabbable mid-close without waiting.
 - Collapsible categories expand/collapse with content height spring, re-targetable mid-motion.
 - Rubber-banded overscroll native; no pull-to-refresh on Home (status is derived on read, nothing to refresh — the app opens by recomputing, FR-046).
-- No swipe row actions in R1 (edit/delete live in part detail's ⋯ menu — discoverable, no hidden destructive edge-swipes). Revisit if the ⋯ menu gets crowded.
+- No swipe row actions in R1. Custom-part edit/delete actions are visible on part detail; delete uses a confirmation dialog and preserves service history.
 
 ## §8. Accessibility
 

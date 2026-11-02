@@ -2,7 +2,7 @@
 
 Car Maintenance Tracker (working title): React Native + Expo mobile app that tracks petrol/diesel car maintenance from odometer readings. Local-first (SQLite), optional Supabase backup and sync. Personal use first, public product later.
 
-Status: documentation phase, no application code yet. Docs 01-03, 05-08 approved; 04 (UI/UX), 09-12 not started. Docs are in English.
+Status: local-only MVP implementation exists in `app/`; account/sync remains deferred. Docs 01-03, 05-08 approved; 04 (UI/UX) is a draft; 09-12 are not started. Docs are in English.
 
 ## Rules for agents
 

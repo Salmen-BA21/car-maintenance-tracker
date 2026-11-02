@@ -140,7 +140,7 @@ Everything about one part. Structure top-down:
 
 ```
 ┌──────────────────────────────────┐
-│  ← Back            (edit ⋯)     │
+│  ← Back                         │
 │  Engine oil                       │
 │  Engine                          │
 │                                  │
@@ -165,7 +165,7 @@ Everything about one part. Structure top-down:
 ```
 
 - **Mark as replaced sheet** (J-03): km (default = current odometer, FR-050), date (default today — the setup screen never defaults dates, this normal replace flow does), cost optional with currency preset from Settings (FR-056, FR-111), notes optional. Validation per BR-07/AC-12 inline (km > odometer rejected, future date rejected). Save restarts counters (BR-06) — full interval shows again, success haptic, sheet closes to the recomputed detail.
-- **Edit ⋯ menu**: edit name and intervals (FR-034), change alert setting, per-part "warn earlier" (R2, FR-049), hide default part / delete custom part — delete or hide confirmations per AC-17 (deleting a custom part destroys its history: explicit copy; hiding keeps it).
+- **Custom part actions**: custom parts show visible **Edit** and **Delete** actions on the detail screen. Edit opens the custom-part form with the current name and intervals. Delete requires confirmation, soft-deletes the part, preserves its service history for history/export, and returns to Home. Default parts do not show these actions.
 - **History**: newest first by active-record rule (D-42); each record editable/deletable after confirmation (FR-054); cost totals exclude "Initial" (BR-16).
 - A part with no service record yet shows, instead of numbers: "No service recorded yet — enter the last-change km" with an inline field (FR-063). Statuses Unknown / "Set interval" / Inspect each show a one-line explanation of what to do (honesty + next action, UI-04).
 

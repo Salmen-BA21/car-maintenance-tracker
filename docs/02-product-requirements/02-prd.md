@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, OQ-05) |
-| Version | 0.6 (approved 2026-11-01; local-first account connection and backup aligned with D-107 to D-111) |
+| Version | 0.7 (approved 2026-11-02; local MVP implementation alignment) |
 | Date | 2026-11-01 |
 | Owner | Salmen Ben Ammar |
 | Related | [PVD](../01-discovery/01-product-vision.md), [SRS](../03-technical-specifications/03-srs.md), [README](../../README.md) |

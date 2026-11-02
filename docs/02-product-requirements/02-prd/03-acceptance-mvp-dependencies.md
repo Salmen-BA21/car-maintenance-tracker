@@ -33,7 +33,7 @@
 | AC-25 | F-01, F-13 | Given a fresh install without an account, when I create and update a car, then all data is stored and usable offline and the sync state is Not connected. |
 | AC-26 | F-01, F-13 | Given an account with no cloud rows and a local profile, when I review the upload count and confirm connection, then the complete profile uploads atomically and sync becomes Connected only after success. |
 | AC-27 | F-01, F-13 | Given an account with cloud data and a local profile, when I choose Use cloud data, then the app offers JSON backup, validates the cloud dataset, and replaces the local profile only after validation. When I cancel, neither dataset changes and the account session is cleared. |
-| AC-28 | F-15 | Given airplane mode, when I export from Settings, then the app creates a JSON backup through the system Share/Save sheet without changing local data; it contains live maintenance data and export metadata but no credentials, account email, device identifiers, sync metadata, or tombstones. |
+| AC-28 | F-15 | Given airplane mode, when I export from Settings, then the app creates a JSON backup through the system Share/Save sheet without changing local data; it contains maintenance data, required soft-deleted part rows for preserved service-history references, and export metadata, but no credentials, account email, device identifiers, or sync metadata. |
 
 ## 8. MVP definition
 

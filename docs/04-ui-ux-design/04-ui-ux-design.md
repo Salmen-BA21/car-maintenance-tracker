@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Project | Car Maintenance Tracker (working title, OQ-05) |
-| Version | 0.1 (draft — proposal pending owner approval; the doc is not started in AGENTS.md and MVP-SCOPE §3 asks for a screen sketch, not a full spec) |
+| Version | 0.2 (draft — aligned with the local MVP implementation; proposal pending owner approval) |
 | Date | 2026-11-02 |
 | Owner | Salmen Ben Ammar |
 | Related | [PVD](../01-discovery/01-product-vision.md), [PRD](../02-product-requirements/02-prd.md), [SRS](../03-technical-specifications/03-srs.md), [TRD](../03-technical-specifications/05-trd.md), [MVP-SCOPE](../../MVP-SCOPE.md) |

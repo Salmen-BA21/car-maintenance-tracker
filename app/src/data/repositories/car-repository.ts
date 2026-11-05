@@ -2,6 +2,7 @@ import * as Crypto from 'expo-crypto';
 import type { SQLiteDatabase } from 'expo-sqlite';
 
 import { parseCreateCarInput, type CreateCarInput } from './car-input';
+import { inspectionDueDate, isInspectionDue } from '../../domain/inspection';
 import { jsDateToLocalDate, type LocalDate } from '../../domain/local-date';
 import { computeStatus, type PartStatus, type StatusResult } from '../../domain/status';
 
@@ -174,6 +175,13 @@ export interface DashboardPart {
   remainingKm: number | null;
   dueDate: LocalDate | null;
   remainingDays: number | null;
+  /** Condition-based parts only: the inspection period has elapsed (BR-08, D-52). */
+  inspectionDue: boolean;
+  /** Condition-based parts only: when the next inspection falls due. */
+  inspectionDueDate: LocalDate | null;
+  /** Date of the active service record; used to place part alerts. */
+  serviceDate: LocalDate | null;
+  includeInReminders: boolean;
   isCustom: boolean;
 }
 
@@ -210,18 +218,68 @@ type DashboardRow = {
   intervalType: 'distance' | 'time' | 'both' | 'condition';
   distanceKm: number | null;
   months: number | null;
+  inspectionMonths: number | null;
+  createdAt: string;
   serviceKm: number | null;
   serviceDate: LocalDate | null;
+  lastInspectionDate: LocalDate | null;
+  includeInReminders: number;
   templateCode: string | null;
 };
 
+function toDashboardPart(row: DashboardRow, currentOdometerKm: number): DashboardPart {
+  const today = jsDateToLocalDate(new Date());
+  const result: StatusResult = computeStatus(
+    { intervalType: row.intervalType, distanceKm: row.distanceKm, months: row.months },
+    row.serviceKm === null && row.serviceDate === null ? null : { serviceKm: row.serviceKm, serviceDate: row.serviceDate },
+    currentOdometerKm,
+    today,
+  );
+  const inspection =
+    row.intervalType === 'condition' && row.inspectionMonths !== null
+      ? {
+          inspectionMonths: row.inspectionMonths,
+          lastInspectionDate: row.lastInspectionDate,
+          lastServiceDate: row.serviceDate,
+          createdDate: jsDateToLocalDate(new Date(row.createdAt)),
+        }
+      : null;
+  return {
+    id: row.id,
+    name: row.name,
+    categoryName: row.categoryName,
+    intervalType: row.intervalType,
+    distanceKm: row.distanceKm,
+    months: row.months,
+    isCustom: row.templateCode === null,
+    ...result,
+    inspectionDue: inspection !== null && isInspectionDue(inspection, today),
+    inspectionDueDate: inspection === null ? null : inspectionDueDate(inspection),
+    serviceDate: row.serviceDate,
+    includeInReminders: Boolean(row.includeInReminders),
+  };
+}
+
 export async function getDashboard(db: SQLiteDatabase): Promise<DashboardData> {
+  // Read the car separately: a car with every part hidden still needs a dashboard.
+  const car = await db.getFirstAsync<{ carId: string; carName: string; currentOdometerKm: number | null }>(
+    `SELECT c.id AS carId, c.name AS carName,
+       (SELECT MAX(value_km) FROM odometer_entries WHERE car_id = c.id AND deleted_at IS NULL) AS currentOdometerKm
+     FROM cars c WHERE c.deleted_at IS NULL LIMIT 1`,
+  );
+  if (!car || car.currentOdometerKm === null) {
+    throw new Error('No car or current odometer was found.');
+  }
+  const currentOdometerKm = car.currentOdometerKm;
   const rows = await db.getAllAsync<DashboardRow>(
     `SELECT c.id AS carId, c.name AS carName,
        (SELECT MAX(value_km) FROM odometer_entries WHERE car_id = c.id AND deleted_at IS NULL) AS currentOdometerKm,
        p.id, p.name, cat.name AS categoryName, p.interval_type AS intervalType,
-       p.distance_km AS distanceKm, p.months, p.template_code AS templateCode,
-       sr.service_km AS serviceKm, sr.service_date AS serviceDate
+       p.distance_km AS distanceKm, p.months, p.inspection_months AS inspectionMonths,
+       p.created_at AS createdAt, p.include_in_reminders AS includeInReminders,
+       p.template_code AS templateCode,
+       sr.service_km AS serviceKm, sr.service_date AS serviceDate,
+       i.service_date AS lastInspectionDate
      FROM cars c
      JOIN parts p ON p.car_id = c.id AND p.deleted_at IS NULL
      JOIN categories cat ON cat.id = p.category_id
@@ -233,41 +291,142 @@ export async function getDashboard(db: SQLiteDatabase): Promise<DashboardData> {
                 candidate.created_at DESC
        LIMIT 1
      )
+     LEFT JOIN service_records i ON i.id = (
+       SELECT candidate.id FROM service_records candidate
+       WHERE candidate.part_id = p.id AND candidate.deleted_at IS NULL AND candidate.kind = 'inspection'
+       ORDER BY candidate.service_date DESC
+       LIMIT 1
+     )
      WHERE c.deleted_at IS NULL
+       AND p.hidden_by IS NULL
      ORDER BY cat.sort_order, p.sort_order`,
   );
-  if (rows.length === 0 || rows[0].currentOdometerKm === null) {
-    throw new Error('No car or current odometer was found.');
-  }
 
-  const today = jsDateToLocalDate(new Date());
   return {
-    carId: rows[0].carId,
-    carName: rows[0].carName,
-    currentOdometerKm: rows[0].currentOdometerKm,
-    parts: rows.map((row) => {
-      const result: StatusResult = computeStatus(
-        { intervalType: row.intervalType, distanceKm: row.distanceKm, months: row.months },
-        row.serviceKm === null && row.serviceDate === null ? null : { serviceKm: row.serviceKm, serviceDate: row.serviceDate },
-        row.currentOdometerKm,
-        today,
-      );
-      return { id: row.id, name: row.name, categoryName: row.categoryName, intervalType: row.intervalType, distanceKm: row.distanceKm, months: row.months, isCustom: row.templateCode === null, ...result };
-    }),
+    carId: car.carId,
+    carName: car.carName,
+    currentOdometerKm,
+    parts: rows.map((row) => toDashboardPart(row, currentOdometerKm)),
   };
 }
 
-export async function updateOdometer(db: SQLiteDatabase, carId: string, valueKm: number): Promise<void> {
+const ODOMETER_ORDER = 'value_km DESC, entry_date DESC, created_at DESC, id DESC';
+
+export interface OdometerEntry {
+  id: string;
+  valueKm: number;
+  entryDate: LocalDate;
+  createdAt: string;
+}
+
+export async function getOdometerHistory(db: SQLiteDatabase, carId: string): Promise<OdometerEntry[]> {
+  return db.getAllAsync<OdometerEntry>(
+    `SELECT id, value_km AS valueKm, entry_date AS entryDate, created_at AS createdAt
+     FROM odometer_entries WHERE car_id = ? AND deleted_at IS NULL
+     ORDER BY ${ODOMETER_ORDER}`,
+    carId,
+  );
+}
+
+/** Was the mileage updated on the given day? Skips that day's reminder (BR-09, D-50). */
+export async function hasOdometerEntryToday(db: SQLiteDatabase, carId: string, entryDate: LocalDate): Promise<boolean> {
+  const row = await db.getFirstAsync<{ present: number }>(
+    `SELECT EXISTS (
+       SELECT 1 FROM odometer_entries
+       WHERE car_id = ? AND deleted_at IS NULL AND entry_date = ?
+     ) AS present`,
+    carId,
+    entryDate,
+  );
+  return row?.present === 1;
+}
+
+function assertOdometerValue(valueKm: number): void {
   if (!Number.isInteger(valueKm) || valueKm < 0 || valueKm > 9_999_999) {
     throw new Error('Odometer must be a whole number between 0 and 9,999,999.');
   }
+}
+
+/** D-50 / DB-18: only the latest entry may be edited or deleted. */
+async function findEditableEntry(db: SQLiteDatabase, entryId: string) {
+  const entry = await db.getFirstAsync<{ id: string; carId: string; valueKm: number }>(
+    'SELECT id, car_id AS carId, value_km AS valueKm FROM odometer_entries WHERE id = ? AND deleted_at IS NULL',
+    entryId,
+  );
+  if (!entry) throw new Error('Odometer entry was not found.');
+  const latest = await db.getFirstAsync<{ id: string }>(
+    `SELECT id FROM odometer_entries WHERE car_id = ? AND deleted_at IS NULL
+     ORDER BY ${ODOMETER_ORDER} LIMIT 1`,
+    entry.carId,
+  );
+  if (latest?.id !== entry.id) throw new Error('Only the latest odometer entry can be edited or deleted.');
+  return entry;
+}
+
+/** D-50 / DB-18: no live service record may sit above the resulting current odometer. */
+async function assertAboveServiceRecords(db: SQLiteDatabase, carId: string, valueKm: number): Promise<void> {
+  const row = await db.getFirstAsync<{ serviceKm: number | null }>(
+    `SELECT MAX(service_km) AS serviceKm FROM service_records
+     WHERE car_id = ? AND deleted_at IS NULL AND kind = 'service'`,
+    carId,
+  );
+  if (row?.serviceKm != null && valueKm < row.serviceKm) {
+    throw new Error(`Odometer cannot be below ${row.serviceKm.toLocaleString()} km, the highest service record.`);
+  }
+}
+
+/** Highest live value other than `entry`; null when it is the only entry. */
+async function maxOtherEntryValue(
+  db: SQLiteDatabase,
+  entry: { id: string; carId: string },
+): Promise<number | null> {
+  const row = await db.getFirstAsync<{ value: number | null }>(
+    `SELECT MAX(value_km) AS value FROM odometer_entries
+     WHERE car_id = ? AND deleted_at IS NULL AND id <> ?`,
+    entry.carId,
+    entry.id,
+  );
+  return row?.value ?? null;
+}
+
+export async function updateOdometerEntry(db: SQLiteDatabase, entryId: string, valueKm: number): Promise<void> {
+  assertOdometerValue(valueKm);
+  const entry = await findEditableEntry(db, entryId);
+  const next = await maxOtherEntryValue(db, entry);
+  if (next !== null && valueKm < next) {
+    throw new Error(`Odometer cannot go below ${next.toLocaleString()} km, the next mileage entry.`);
+  }
+  await assertAboveServiceRecords(db, entry.carId, valueKm);
+  await db.runAsync(
+    'UPDATE odometer_entries SET value_km = ?, updated_at = ? WHERE id = ?',
+    valueKm,
+    new Date().toISOString(),
+    entryId,
+  );
+}
+
+export async function deleteOdometerEntry(db: SQLiteDatabase, entryId: string): Promise<void> {
+  const entry = await findEditableEntry(db, entryId);
+  const remaining = await maxOtherEntryValue(db, entry);
+  if (remaining === null) throw new Error('The last odometer entry cannot be deleted.');
+  await assertAboveServiceRecords(db, entry.carId, remaining);
+  const timestamp = new Date().toISOString();
+  await db.runAsync(
+    'UPDATE odometer_entries SET deleted_at = ?, updated_at = ? WHERE id = ?',
+    timestamp,
+    timestamp,
+    entryId,
+  );
+}
+
+export async function updateOdometer(db: SQLiteDatabase, carId: string, valueKm: number): Promise<void> {
+  assertOdometerValue(valueKm);
   const current = await db.getFirstAsync<{ value: number | null }>(
     'SELECT MAX(value_km) AS value FROM odometer_entries WHERE car_id = ? AND deleted_at IS NULL',
     carId,
   );
   if (current?.value === null || current?.value === undefined) throw new Error('Current odometer is missing.');
   if (valueKm < current.value) throw new Error(`Odometer cannot go below ${current.value.toLocaleString()} km.`);
-  if (valueKm === current.value) return;
   const timestamp = new Date().toISOString();
   await db.runAsync(
     `INSERT INTO odometer_entries (id, car_id, value_km, entry_date, created_at, updated_at)
@@ -286,8 +445,11 @@ export async function getPartDetail(db: SQLiteDatabase, partId: string): Promise
       `SELECT c.id AS carId, c.name AS carName,
          (SELECT MAX(value_km) FROM odometer_entries WHERE car_id = c.id AND deleted_at IS NULL) AS currentOdometerKm,
          p.id, p.name, cat.name AS categoryName, p.interval_type AS intervalType,
-         p.distance_km AS distanceKm, p.months, p.template_code AS templateCode,
-         sr.service_km AS serviceKm, sr.service_date AS serviceDate
+         p.distance_km AS distanceKm, p.months, p.inspection_months AS inspectionMonths,
+         p.created_at AS createdAt, p.include_in_reminders AS includeInReminders,
+         p.template_code AS templateCode,
+         sr.service_km AS serviceKm, sr.service_date AS serviceDate,
+         i.service_date AS lastInspectionDate
        FROM parts p
        JOIN cars c ON c.id = p.car_id AND c.deleted_at IS NULL
        JOIN categories cat ON cat.id = p.category_id
@@ -299,17 +461,17 @@ export async function getPartDetail(db: SQLiteDatabase, partId: string): Promise
                   candidate.created_at DESC
          LIMIT 1
        )
+       LEFT JOIN service_records i ON i.id = (
+         SELECT candidate.id FROM service_records candidate
+         WHERE candidate.part_id = p.id AND candidate.deleted_at IS NULL AND candidate.kind = 'inspection'
+         ORDER BY candidate.service_date DESC
+         LIMIT 1
+       )
        WHERE p.id = ? AND p.deleted_at IS NULL`,
       partId,
     );
     const row = dashboard[0];
     if (!row || row.currentOdometerKm === null) throw new Error('Part or current odometer was not found.');
-    const result = computeStatus(
-      { intervalType: row.intervalType, distanceKm: row.distanceKm, months: row.months },
-      row.serviceKm === null && row.serviceDate === null ? null : { serviceKm: row.serviceKm, serviceDate: row.serviceDate },
-      row.currentOdometerKm,
-      jsDateToLocalDate(new Date()),
-    );
     const history = await db.getAllAsync<ServiceHistoryRecord>(
       `SELECT id, kind, service_km AS serviceKm, service_date AS serviceDate,
          cost_minor AS costMinor, cost_currency AS costCurrency, notes,
@@ -320,35 +482,72 @@ export async function getPartDetail(db: SQLiteDatabase, partId: string): Promise
       partId,
     );
     return {
-      part: { id: row.id, name: row.name, categoryName: row.categoryName, intervalType: row.intervalType, distanceKm: row.distanceKm, months: row.months, isCustom: row.templateCode === null, ...result },
+      part: toDashboardPart(row, row.currentOdometerKm),
       history: history.map((record) => ({ ...record, isBaseline: Boolean(record.isBaseline) })),
     };
   }
 
 export interface ServiceRecordInput {
     partId: string;
-    serviceKm: number;
-    serviceDate: LocalDate;
+    serviceKm: number | null;
+    serviceDate: LocalDate | null;
     costMinor: number | null;
     costCurrency: string | null;
     notes: string | null;
   }
 
+function validateServiceValues(
+  input: { serviceKm: number | null; serviceDate: LocalDate | null; costMinor: number | null; costCurrency: string | null },
+  isBaseline: boolean,
+): void {
+  if (input.serviceKm !== null && (!Number.isInteger(input.serviceKm) || input.serviceKm < 0 || input.serviceKm > 9_999_999)) {
+    throw new Error('Service km must be a whole number between 0 and 9,999,999.');
+  }
+  if (input.serviceDate !== null && !isLocalDate(input.serviceDate)) {
+    throw new Error('Service date must use YYYY-MM-DD.');
+  }
+  if (input.serviceKm === null && input.serviceDate === null) {
+    throw new Error('Enter a service km or date.');
+  }
+  if (!isBaseline && (input.serviceKm === null || input.serviceDate === null)) {
+    throw new Error('Service km and date are required.');
+  }
+  if (input.costMinor !== null && (!Number.isInteger(input.costMinor) || input.costMinor < 0 || !input.costCurrency)) {
+    throw new Error('A cost must include a non-negative amount and currency.');
+  }
+}
+
+function assertNotFutureDate(date: LocalDate, label: string): void {
+  if (date > jsDateToLocalDate(new Date())) {
+    throw new Error(`${label} cannot be in the future.`);
+  }
+}
+
+/** BR-07: a service record's km cannot exceed the current odometer and its date cannot be in the future. */
+async function assertServiceRecordFitsOdometer(
+  db: SQLiteDatabase,
+  carId: string,
+  input: { serviceKm: number | null; serviceDate: LocalDate | null },
+): Promise<void> {
+  if (input.serviceDate !== null) assertNotFutureDate(input.serviceDate, 'Service date');
+  if (input.serviceKm === null) return;
+  const row = await db.getFirstAsync<{ value: number | null }>(
+    'SELECT MAX(value_km) AS value FROM odometer_entries WHERE car_id = ? AND deleted_at IS NULL',
+    carId,
+  );
+  if (row?.value != null && input.serviceKm > row.value) {
+    throw new Error(`Service km cannot exceed ${row.value.toLocaleString()} km, the current odometer.`);
+  }
+}
+
 export async function addServiceRecord(db: SQLiteDatabase, input: ServiceRecordInput): Promise<void> {
-    if (!Number.isInteger(input.serviceKm) || input.serviceKm < 0 || input.serviceKm > 9_999_999) {
-      throw new Error('Service km must be a whole number between 0 and 9,999,999.');
-    }
-    if (!isLocalDate(input.serviceDate)) {
-      throw new Error('Service date must use YYYY-MM-DD.');
-    }
-    if (input.costMinor !== null && (!Number.isInteger(input.costMinor) || input.costMinor < 0 || !input.costCurrency)) {
-      throw new Error('A cost must include a non-negative amount and currency.');
-    }
+    validateServiceValues(input, false);
     const part = await db.getFirstAsync<{ carId: string }>(
       'SELECT car_id AS carId FROM parts WHERE id = ? AND deleted_at IS NULL',
       input.partId,
     );
     if (!part) throw new Error('Part was not found.');
+    await assertServiceRecordFitsOdometer(db, part.carId, input);
     const timestamp = new Date().toISOString();
     await db.runAsync(
       `INSERT INTO service_records (
@@ -366,6 +565,98 @@ export async function addServiceRecord(db: SQLiteDatabase, input: ServiceRecordI
       timestamp,
       timestamp,
     );
+}
+
+export interface ServiceRecordUpdateInput {
+  serviceKm: number | null;
+  serviceDate: LocalDate | null;
+  costMinor: number | null;
+  costCurrency: string | null;
+  notes: string | null;
+}
+
+/** Edits a history record; the active record is recomputed by the read queries (AC-18). */
+export async function updateServiceRecord(db: SQLiteDatabase, recordId: string, input: ServiceRecordUpdateInput): Promise<void> {
+  const record = await db.getFirstAsync<{ kind: 'service' | 'inspection'; isBaseline: number; carId: string }>(
+    'SELECT kind, is_baseline AS isBaseline, car_id AS carId FROM service_records WHERE id = ? AND deleted_at IS NULL',
+    recordId,
+  );
+  if (!record) throw new Error('Service record was not found.');
+  const timestamp = new Date().toISOString();
+  if (record.kind === 'inspection') {
+    if (input.serviceDate === null || !isLocalDate(input.serviceDate)) {
+      throw new Error('Inspection date must use YYYY-MM-DD.');
+    }
+    assertNotFutureDate(input.serviceDate, 'Inspection date');
+    await db.runAsync(
+      'UPDATE service_records SET service_date = ?, notes = ?, updated_at = ? WHERE id = ?',
+      input.serviceDate,
+      input.notes,
+      timestamp,
+      recordId,
+    );
+    return;
+  }
+  validateServiceValues(input, Boolean(record.isBaseline));
+  await assertServiceRecordFitsOdometer(db, record.carId, input);
+  await db.runAsync(
+    `UPDATE service_records SET service_km = ?, service_date = ?, cost_minor = ?,
+       cost_currency = ?, notes = ?, updated_at = ? WHERE id = ?`,
+    input.serviceKm,
+    input.serviceDate,
+    input.costMinor,
+    input.costCurrency,
+    input.notes,
+    timestamp,
+    recordId,
+  );
+}
+
+export async function deleteServiceRecord(db: SQLiteDatabase, recordId: string): Promise<void> {
+  const record = await db.getFirstAsync<{ id: string }>(
+    'SELECT id FROM service_records WHERE id = ? AND deleted_at IS NULL',
+    recordId,
+  );
+  if (!record) throw new Error('Service record was not found.');
+  const timestamp = new Date().toISOString();
+  await db.runAsync(
+    'UPDATE service_records SET deleted_at = ?, updated_at = ? WHERE id = ?',
+    timestamp,
+    timestamp,
+    recordId,
+  );
+}
+
+export interface InspectionInput {
+  partId: string;
+  inspectionDate: LocalDate;
+}
+
+/** Records an inspection of a condition-based part (BR-08, DB-11). */
+export async function addInspection(db: SQLiteDatabase, input: InspectionInput): Promise<void> {
+  if (!isLocalDate(input.inspectionDate)) {
+    throw new Error('Inspection date must use YYYY-MM-DD.');
+  }
+  assertNotFutureDate(input.inspectionDate, 'Inspection date');
+  const part = await db.getFirstAsync<{ carId: string; intervalType: string }>(
+    'SELECT car_id AS carId, interval_type AS intervalType FROM parts WHERE id = ? AND deleted_at IS NULL',
+    input.partId,
+  );
+  if (!part) throw new Error('Part was not found.');
+  if (part.intervalType !== 'condition') throw new Error('Only inspection-based parts can be inspected.');
+  const timestamp = new Date().toISOString();
+  await db.runAsync(
+    `INSERT INTO service_records (
+      id, car_id, part_id, kind, service_km, service_date, is_baseline,
+      cost_minor, cost_currency, notes, created_at, updated_at
+    ) VALUES (?, ?, ?, 'inspection', NULL, ?, 0, NULL, NULL, NULL, ?, ?)`,
+    Crypto.randomUUID(),
+    part.carId,
+    input.partId,
+    input.inspectionDate,
+    timestamp,
+    timestamp,
+  );
 }
 
 export interface SetupPart {

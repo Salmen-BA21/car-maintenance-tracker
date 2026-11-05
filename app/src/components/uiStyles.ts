@@ -55,5 +55,6 @@ export const styles = StyleSheet.create({
   historyRow: { alignItems: 'center', backgroundColor: colors.panel, borderRadius: 10, flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8, padding: 14 },
   success: { color: colors.accent, fontSize: 15, marginBottom: 16, marginTop: 16 },
   actionRow: { flexDirection: 'row', gap: 20, marginTop: 14 },
+  notice: { backgroundColor: '#FFF6E5', borderColor: '#E8C98A', borderRadius: 12, borderWidth: 1, marginBottom: 16, padding: 14 },
   dangerText: { color: colors.error, fontSize: 16, fontWeight: '700' },
 });

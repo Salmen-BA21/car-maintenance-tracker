@@ -1,7 +1,13 @@
-import { isInspectionDue } from '../inspection';
+import { inspectionDueDate, isInspectionDue } from '../inspection';
 
 describe('isInspectionDue (BR-08, D-52)', () => {
   const base = { inspectionMonths: 3, lastInspectionDate: null, lastServiceDate: null, createdDate: null };
+
+  test('returns the due date from the latest anchor', () => {
+    expect(inspectionDueDate({ ...base, createdDate: '2026-01-01' })).toBe('2026-04-01');
+    expect(inspectionDueDate({ ...base, createdDate: '2026-01-01', lastServiceDate: '2026-10-01' })).toBe('2027-01-01');
+    expect(inspectionDueDate(base)).toBeNull();
+  });
 
   test('created today → not due', () => {
     expect(isInspectionDue({ ...base, createdDate: '2026-11-02' }, '2026-11-02')).toBe(false);

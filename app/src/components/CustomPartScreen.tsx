@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput } from 'react-native';
 
 import { createCustomPart, getCustomPart, updateCustomPart, type CustomPart } from '../data/repositories/car-repository';
+import { afterWrite } from '../notifications/notification-service';
 import { ChoiceField, Field } from './ui';
 import { colors, styles } from './uiStyles';
 
@@ -46,6 +47,7 @@ export function CustomPartScreen({ carId, partId, onDone }: { carId?: string; pa
       if (partId) await updateCustomPart(db, partId, input);
       else if (carId) await createCustomPart(db, { carId, ...input });
       else throw new Error('Could not identify your car.');
+      await afterWrite(db);
       onDone();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not save the custom part.');

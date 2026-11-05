@@ -28,8 +28,9 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
     try {
       setError('');
       await saveAppSettings(db, settings);
-      await rebuildNotifications(db);
-      setSaved(true);
+      const status = await rebuildNotifications(db, { requestPermission: settings.remindersEnabled });
+      setSaved(status !== 'denied');
+      if (status === 'denied') setError('Notifications are blocked. Enable them in your device settings.');
     } catch (cause) {
       setSaved(false);
       setError(cause instanceof Error ? cause.message : 'Could not save settings.');

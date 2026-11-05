@@ -1,6 +1,6 @@
 import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { AppState, Text, View } from 'react-native';
 
 import { BaselineScreen } from '../components/BaselineScreen';
 import { DashboardScreen } from '../components/DashboardScreen';
@@ -10,7 +10,7 @@ import { PartDetailScreen } from '../components/PartDetailScreen';
 import { SetupScreen } from '../components/SetupScreen';
 import { styles } from '../components/uiStyles';
 import { getCarCount } from '../data/repositories/car-repository';
-import { rebuildNotifications } from '../notifications/notification-service';
+import { afterWrite } from '../notifications/notification-service';
 
 export default function Home() {
   const db = useSQLiteContext();
@@ -37,11 +37,12 @@ export default function Home() {
   }, [db]);
 
   useEffect(() => {
-    if (hasCar) {
-      void rebuildNotifications(db).catch((cause: unknown) => {
-        setLoadError(cause instanceof Error ? `Notifications unavailable: ${cause.message}` : 'Notifications are unavailable.');
-      });
-    }
+    if (!hasCar) return;
+    void afterWrite(db);
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') void afterWrite(db);
+    });
+    return () => subscription.remove();
   }, [db, hasCar]);
 
   if (loadError !== null) return <MessageScreen title="Your garage could not open." message={loadError} />;

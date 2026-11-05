@@ -4,7 +4,7 @@ import { AppState, Text, View } from 'react-native';
 
 import { BaselineScreen } from '../components/BaselineScreen';
 import { DashboardScreen } from '../components/DashboardScreen';
-import { CustomPartScreen } from '../components/CustomPartScreen';
+import { PartConfigScreen } from '../components/PartConfigScreen';
 import { SettingsScreen } from '../components/SettingsScreen';
 import { PartDetailScreen } from '../components/PartDetailScreen';
 import { SetupScreen } from '../components/SetupScreen';
@@ -17,8 +17,8 @@ export default function Home() {
   const [hasCar, setHasCar] = useState<boolean | null>(null);
   const [newCarId, setNewCarId] = useState<string | null>(null);
   const [selectedPartId, setSelectedPartId] = useState<string | null>(null);
-  const [editingCustomPart, setEditingCustomPart] = useState<string | null>(null);
-  const [addingCustomPart, setAddingCustomPart] = useState<string | null>(null);
+  const [editingPart, setEditingPart] = useState<string | null>(null);
+  const [addingPart, setAddingPart] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -58,11 +58,11 @@ export default function Home() {
     );
   }
   if (newCarId !== null) return <BaselineScreen carId={newCarId} onDone={() => setNewCarId(null)} />;
-  if (editingCustomPart !== null) return <CustomPartScreen partId={editingCustomPart} onDone={() => { setEditingCustomPart(null); setSelectedPartId(null); }} />;
-  if (selectedPartId !== null) return <PartDetailScreen partId={selectedPartId} onBack={() => setSelectedPartId(null)} onEdit={() => setEditingCustomPart(selectedPartId)} />;
-  if (addingCustomPart !== null) return <CustomPartScreen carId={addingCustomPart} onDone={() => setAddingCustomPart(null)} />;
+  if (editingPart !== null) return <PartConfigScreen partId={editingPart} onDone={() => { setEditingPart(null); setSelectedPartId(null); }} />;
+  if (selectedPartId !== null) return <PartDetailScreen partId={selectedPartId} onBack={() => setSelectedPartId(null)} onEdit={() => setEditingPart(selectedPartId)} />;
+  if (addingPart !== null) return <PartConfigScreen carId={addingPart} onDone={() => setAddingPart(null)} />;
   if (showSettings) return <SettingsScreen onBack={() => setShowSettings(false)} />;
-  return <DashboardScreen onPartPress={setSelectedPartId} onAddCustomPart={(carId) => setAddingCustomPart(carId)} onSettings={() => setShowSettings(true)} />;
+  return <DashboardScreen onPartPress={setSelectedPartId} onAddCustomPart={(carId) => setAddingPart(carId)} onSettings={() => setShowSettings(true)} />;
 }
 
 function MessageScreen({ kicker, title, message }: { kicker?: string; title: string; message?: string }) {

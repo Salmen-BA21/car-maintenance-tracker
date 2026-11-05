@@ -27,7 +27,7 @@ describe('notification service (D-24, AC-20)', () => {
     jest.clearAllMocks();
     jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.mocked(getAppSettings).mockResolvedValue({ remindersEnabled: true, reminderTime: '23:59', currency: 'EUR' });
-    jest.mocked(getDashboard).mockResolvedValue({ carId: 'car-1', carName: 'Car', currentOdometerKm: 100_000, parts: [] });
+    jest.mocked(getDashboard).mockResolvedValue({ carId: 'car-1', carName: 'Car', currentOdometerKm: 100_000, parts: [], hiddenParts: [] });
     jest.mocked(hasOdometerEntryToday).mockResolvedValue(false);
     jest.mocked(Notifications.getPermissionsAsync).mockResolvedValue({ granted: true, status: 'granted' } as never);
     jest.mocked(Notifications.requestPermissionsAsync).mockResolvedValue({ granted: true, status: 'granted' } as never);

@@ -1,7 +1,7 @@
 import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, Pressable, Text, TextInput, View } from 'react-native';
-import { addInspection, addServiceRecord, deleteCustomPart, deleteServiceRecord, getPartDetail, updateServiceRecord, type DashboardPart, type PartDetail } from '../data/repositories/car-repository';
+import { Alert, FlatList, Pressable, Switch, Text, TextInput, View } from 'react-native';
+import { addInspection, addServiceRecord, deleteCustomPart, deleteServiceRecord, getPartDetail, setPartAlerts, setPartHidden, updateServiceRecord, type DashboardPart, type PartDetail } from '../data/repositories/car-repository';
 import { jsDateToLocalDate } from '../domain/local-date';
 import { afterWrite } from '../notifications/notification-service';
 import { colors, styles } from './uiStyles';
@@ -19,6 +19,7 @@ export function PartDetailScreen({ partId, onBack, onEdit }: { partId: string; o
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [configuring, setConfiguring] = useState(false);
 
   async function load() {
     try {
@@ -121,6 +122,34 @@ export function PartDetailScreen({ partId, onBack, onEdit }: { partId: string; o
     }
   }
 
+  async function hidePart() {
+    setError('');
+    setConfiguring(true);
+    try {
+      await setPartHidden(db, partId, true);
+      await afterWrite(db);
+      onBack();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not hide this part.');
+    } finally {
+      setConfiguring(false);
+    }
+  }
+
+  async function toggleAlerts(enabled: boolean) {
+    setError('');
+    setConfiguring(true);
+    try {
+      await setPartAlerts(db, partId, enabled);
+      await afterWrite(db);
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not change alerts for this part.');
+    } finally {
+      setConfiguring(false);
+    }
+  }
+
   if (!detail) return <View style={styles.loading}><Text style={styles.title}>{error || 'Loading part…'}</Text></View>;
   const { part } = detail;
   const isInspection = part.intervalType === 'condition';
@@ -139,9 +168,16 @@ export function PartDetailScreen({ partId, onBack, onEdit }: { partId: string; o
           <Text style={styles.kicker}>{part.categoryName}</Text>
           <Text style={styles.title}>{part.name}</Text>
           {error ? <Text style={styles.error}>{error}</Text> : null}
-          {part.isCustom ? <View style={styles.actionRow}><Pressable accessibilityRole="button" accessibilityLabel={`Edit ${part.name}`} onPress={onEdit}><Text style={styles.linkText}>Edit</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel={`Delete ${part.name}`} accessibilityState={{ disabled: deleting, busy: deleting }} disabled={deleting} onPress={() => Alert.alert('Delete custom part?', 'Its history will be kept but it will disappear from the dashboard.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Delete', style: 'destructive', onPress: removeCustomPart }])}><Text style={styles.dangerText}>{deleting ? 'Deleting…' : 'Delete'}</Text></Pressable></View> : null}
+          <View style={styles.actionRow}>
+            <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${part.name}`} onPress={onEdit}><Text style={styles.linkText}>Edit</Text></Pressable>
+            {part.isCustom ? <Pressable accessibilityRole="button" accessibilityLabel={`Delete ${part.name}`} accessibilityState={{ disabled: deleting, busy: deleting }} disabled={deleting} onPress={() => Alert.alert('Delete custom part?', 'Its history will be kept but it will disappear from the dashboard.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Delete', style: 'destructive', onPress: removeCustomPart }])}><Text style={styles.dangerText}>{deleting ? 'Deleting…' : 'Delete'}</Text></Pressable> : <Pressable accessibilityRole="button" accessibilityLabel={`Hide ${part.name}`} accessibilityState={{ disabled: configuring, busy: configuring }} disabled={configuring} onPress={() => Alert.alert('Hide this part?', 'It leaves the dashboard until you show it again. Its history is kept.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Hide', style: 'destructive', onPress: hidePart }])}><Text style={styles.dangerText}>{configuring ? 'Hiding…' : 'Hide'}</Text></Pressable>}
+          </View>
           <Text style={styles.statusLarge}>{statusLabel}</Text>
           <Text style={styles.intro}>{partIntro(part)}</Text>
+          <View style={styles.switchRow}>
+            <View style={styles.switchCopy}><Text style={styles.label}>Alerts</Text><Text style={styles.helper}>Include this part in reminders and due-date alerts.</Text></View>
+            <Switch accessibilityLabel={`Alerts for ${part.name}`} accessibilityRole="switch" disabled={configuring} onValueChange={toggleAlerts} value={part.includeInReminders} />
+          </View>
           <Pressable accessibilityRole="button" accessibilityLabel={showForm ? 'Cancel record form' : isInspection ? 'Record inspection' : 'Record service'} onPress={() => showForm ? resetForm() : setShowForm(true)} style={styles.primaryButton}><Text style={styles.primaryButtonText}>{showForm ? 'Cancel' : isInspection ? 'Record inspection' : 'Record service'}</Text></Pressable>
           {showForm ? <ServiceRecordForm
             currency={currency}

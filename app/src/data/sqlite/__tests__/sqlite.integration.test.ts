@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import type { SQLiteDatabase } from 'expo-sqlite';
 
-import { addInspection, addServiceRecord, createCar, createCustomPart, deleteCustomPart, deleteOdometerEntry, deleteServiceRecord, exportLocalData, getCustomPart, getDashboard, getOdometerHistory, getPartDetail, hasOdometerEntryToday, updateCustomPart, updateOdometer, updateOdometerEntry, updateServiceRecord } from '../../repositories/car-repository';
+import { addInspection, addServiceRecord, createCar, createCustomPart, deleteCustomPart, deleteOdometerEntry, deleteServiceRecord, exportLocalData, getDashboard, getOdometerHistory, getPartConfig, getPartDetail, hasOdometerEntryToday, setPartAlerts, setPartHidden, updateOdometer, updateOdometerEntry, updatePart, updateServiceRecord } from '../../repositories/car-repository';
 import { jsDateToLocalDate } from '../../../domain/local-date';
 import { migrateDbIfNeeded } from '../migrations';
 
@@ -81,22 +81,22 @@ describe('SQLite schema and repository integration', () => {
     expect(database.raw.prepare('SELECT id, template_code, deleted_at FROM parts WHERE id = ?').get(partId)).toEqual(
       expect.objectContaining({ id: partId, template_code: null, deleted_at: null }),
     );
-    expect((await getCustomPart(db, partId)).name).toBe('AC belt');
+    expect((await getPartConfig(db, partId)).name).toBe('AC belt');
 
-    await updateCustomPart(db, partId, {
+    await updatePart(db, partId, {
       name: 'Air-conditioning belt',
       intervalType: 'both',
       distanceKm: 25_000,
       months: 24,
       inspectionMonths: null,
     });
-    expect((await getCustomPart(db, partId)).months).toBe(24);
+    expect((await getPartConfig(db, partId)).months).toBe(24);
 
     await deleteCustomPart(db, partId);
     expect(database.raw.prepare('SELECT deleted_at FROM parts WHERE id = ?').get(partId)).toEqual(
       expect.objectContaining({ deleted_at: expect.any(String) }),
     );
-    await expect(getCustomPart(db, partId)).rejects.toThrow('not found');
+    await expect(getPartConfig(db, partId)).rejects.toThrow('not found');
     const exported = JSON.parse(await exportLocalData(db)) as { parts: { id: string; deleted_at: string | null }[] };
     expect(exported.parts).toEqual(expect.arrayContaining([
       expect.objectContaining({ id: partId, deleted_at: expect.any(String) }),
@@ -119,13 +119,53 @@ describe('SQLite schema and repository integration', () => {
       new Date().toISOString(),
       new Date().toISOString(),
     );
-    await expect(updateCustomPart(db, 'car-1:engine-oil', {
+    await expect(updatePart(db, 'car-1:engine-oil', {
       name: 'Renamed default',
+      intervalType: 'condition',
+      distanceKm: null,
+      months: null,
+      inspectionMonths: 6,
+    })).resolves.toBeUndefined();
+    expect(await getPartConfig(db, 'car-1:engine-oil')).toEqual(expect.objectContaining({
+      name: 'Renamed default',
+      intervalType: 'condition',
+      distanceKm: null,
+      months: null,
+      inspectionMonths: 6,
+    }));
+
+    await expect(updatePart(db, 'car-1:engine-oil', {
+      name: 'Engine oil',
       intervalType: 'distance',
-      distanceKm: 20_000,
+      distanceKm: 15_000,
       months: null,
       inspectionMonths: null,
-    })).rejects.toThrow('not found');
+    })).resolves.toBeUndefined();
+    expect(await getPartConfig(db, 'car-1:engine-oil')).toEqual(expect.objectContaining({
+      distanceKm: 15_000,
+      months: null,
+      inspectionMonths: null,
+    }));
+
+    await updatePart(db, 'car-1:engine-oil', {
+      name: 'Engine oil',
+      intervalType: 'both',
+      distanceKm: 10_000,
+      months: 12,
+      inspectionMonths: null,
+    });
+    await updatePart(db, 'car-1:engine-oil', {
+      name: 'Engine oil',
+      intervalType: 'time',
+      distanceKm: null,
+      months: 12,
+      inspectionMonths: null,
+    });
+    expect(await getPartConfig(db, 'car-1:engine-oil')).toEqual(expect.objectContaining({
+      distanceKm: null,
+      months: 12,
+      inspectionMonths: null,
+    }));
     await expect(deleteCustomPart(db, 'car-1:engine-oil')).rejects.toThrow('not found');
 
     await expect(database.withTransactionAsync(async () => {
@@ -323,16 +363,31 @@ describe('SQLite schema and repository integration', () => {
       entryDate: jsDateToLocalDate(new Date()),
     });
     const partId = `${carId}:air-filter`;
-    await database.runAsync('UPDATE parts SET hidden_by = ? WHERE id = ?', 'user', partId);
+    await setPartHidden(db, partId, true);
 
     const dashboard = await getDashboard(db);
     expect(dashboard.parts.some((part) => part.id === partId)).toBe(false);
+    expect(dashboard.hiddenParts).toEqual([
+      expect.objectContaining({ id: partId, name: expect.any(String), categoryName: expect.any(String) }),
+    ]);
     expect((await getPartDetail(db, partId)).part.id).toBe(partId);
+
+    await setPartHidden(db, partId, false);
+    expect((await getDashboard(db)).hiddenParts).toEqual([]);
+    expect((await getDashboard(db)).parts.some((part) => part.id === partId)).toBe(true);
+    const visibleCount = (await getDashboard(db)).parts.length;
+
+    const oilId = `${carId}:engine-oil`;
+    await setPartAlerts(db, oilId, false);
+    expect((await getDashboard(db)).parts.find((part) => part.id === oilId)?.includeInReminders).toBe(false);
+    await setPartAlerts(db, oilId, true);
+    expect((await getDashboard(db)).parts.find((part) => part.id === oilId)?.includeInReminders).toBe(true);
 
     await database.runAsync('UPDATE parts SET hidden_by = ? WHERE car_id = ?', 'user', carId);
     const emptyDashboard = await getDashboard(db);
     expect(emptyDashboard.carName).toBe('Daily driver');
     expect(emptyDashboard.parts).toEqual([]);
+    expect(emptyDashboard.hiddenParts).toHaveLength(visibleCount);
     database.raw.close();
   });
 });

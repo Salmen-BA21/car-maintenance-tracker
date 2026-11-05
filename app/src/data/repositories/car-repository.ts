@@ -60,7 +60,7 @@ export async function exportLocalData(db: SQLiteDatabase): Promise<string> {
   );
 }
 
-export interface CustomPartInput {
+export interface PartInput {
   carId: string;
   name: string;
   intervalType: 'distance' | 'time' | 'both' | 'condition';
@@ -69,22 +69,13 @@ export interface CustomPartInput {
   inspectionMonths: number | null;
 }
 
-export interface CustomPart extends CustomPartInput {
+export interface PartConfig extends PartInput {
   id: string;
+  includeInReminders: boolean;
 }
 
-export async function getCustomPart(db: SQLiteDatabase, partId: string): Promise<CustomPart> {
-  const row = await db.getFirstAsync<CustomPart>(
-    `SELECT id, car_id AS carId, name, interval_type AS intervalType,
-       distance_km AS distanceKm, months, inspection_months AS inspectionMonths
-     FROM parts WHERE id = ? AND template_code IS NULL AND deleted_at IS NULL`,
-    partId,
-  );
-  if (!row) throw new Error('Custom part was not found.');
-  return row;
-}
-
-export async function createCustomPart(db: SQLiteDatabase, input: CustomPartInput): Promise<string> {
+/** Rejects values that do not match the chosen interval type, so a type switch cannot keep stale columns (BR-14). */
+function validatePartInput(input: Omit<PartInput, 'carId'>): Omit<PartInput, 'carId'> {
   const name = input.name.trim();
   if (!name || name.length > 80) throw new Error('Part name is required and must be 80 characters or less.');
   const requiresDistance = input.intervalType === 'distance' || input.intervalType === 'both';
@@ -96,6 +87,29 @@ export async function createCustomPart(db: SQLiteDatabase, input: CustomPartInpu
   for (const value of [input.distanceKm, input.months, input.inspectionMonths]) {
     if (value !== null && (!Number.isInteger(value) || value <= 0)) throw new Error('Interval values must be positive whole numbers.');
   }
+  return {
+    name,
+    intervalType: input.intervalType,
+    distanceKm: requiresDistance ? input.distanceKm : null,
+    months: requiresTime ? input.months : null,
+    inspectionMonths: requiresInspection ? input.inspectionMonths : null,
+  };
+}
+
+export async function getPartConfig(db: SQLiteDatabase, partId: string): Promise<PartConfig> {
+  const row = await db.getFirstAsync<Omit<PartConfig, 'includeInReminders'> & { includeInReminders: number }>(
+    `SELECT id, car_id AS carId, name, interval_type AS intervalType,
+       distance_km AS distanceKm, months, inspection_months AS inspectionMonths,
+       include_in_reminders AS includeInReminders
+     FROM parts WHERE id = ? AND deleted_at IS NULL`,
+    partId,
+  );
+  if (!row) throw new Error('Part was not found.');
+  return { ...row, includeInReminders: Boolean(row.includeInReminders) };
+}
+
+export async function createCustomPart(db: SQLiteDatabase, input: PartInput): Promise<string> {
+  const values = validatePartInput(input);
   const car = await db.getFirstAsync<{ id: string }>('SELECT id FROM cars WHERE id = ? AND deleted_at IS NULL', input.carId);
   if (!car) throw new Error('Car was not found.');
   const categoryId = 'custom';
@@ -116,11 +130,11 @@ export async function createCustomPart(db: SQLiteDatabase, input: CustomPartInpu
       id,
       input.carId,
       categoryId,
-      name,
-      input.intervalType,
-      input.distanceKm,
-      input.months,
-      input.inspectionMonths,
+      values.name,
+      values.intervalType,
+      values.distanceKm,
+      values.months,
+      values.inspectionMonths,
       timestamp,
       timestamp,
     );
@@ -128,34 +142,56 @@ export async function createCustomPart(db: SQLiteDatabase, input: CustomPartInpu
   return id;
 }
 
-export async function updateCustomPart(db: SQLiteDatabase, partId: string, input: Omit<CustomPartInput, 'carId'>): Promise<void> {
-  const existing = await getCustomPart(db, partId);
-  const name = input.name.trim();
-  if (!name || name.length > 80) throw new Error('Part name is required and must be 80 characters or less.');
-  const requiresDistance = input.intervalType === 'distance' || input.intervalType === 'both';
-  const requiresTime = input.intervalType === 'time' || input.intervalType === 'both';
-  const requiresInspection = input.intervalType === 'condition';
-  if (requiresDistance !== (input.distanceKm !== null) || requiresTime !== (input.months !== null) || requiresInspection !== (input.inspectionMonths !== null)) {
-    throw new Error('Enter the interval values required for this part.');
-  }
-  for (const value of [input.distanceKm, input.months, input.inspectionMonths]) {
-    if (value !== null && (!Number.isInteger(value) || value <= 0)) throw new Error('Interval values must be positive whole numbers.');
-  }
+/** FR-034: the name and intervals of any part, default or custom. */
+export async function updatePart(db: SQLiteDatabase, partId: string, input: Omit<PartInput, 'carId'>): Promise<void> {
+  await getPartConfig(db, partId);
+  const values = validatePartInput(input);
   await db.runAsync(
     `UPDATE parts SET name = ?, interval_type = ?, distance_km = ?, months = ?,
-       inspection_months = ?, updated_at = ? WHERE id = ? AND template_code IS NULL`,
-    name,
-    input.intervalType,
-    input.distanceKm,
-    input.months,
-    input.inspectionMonths,
+       inspection_months = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL`,
+    values.name,
+    values.intervalType,
+    values.distanceKm,
+    values.months,
+    values.inspectionMonths,
     new Date().toISOString(),
-    existing.id,
+    partId,
+  );
+}
+
+/** FR-090 / D-49: the per-part alert switch used by reminders and part alerts. */
+export async function setPartAlerts(db: SQLiteDatabase, partId: string, enabled: boolean): Promise<void> {
+  await getPartConfig(db, partId);
+  await db.runAsync(
+    'UPDATE parts SET include_in_reminders = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL',
+    enabled ? 1 : 0,
+    new Date().toISOString(),
+    partId,
+  );
+}
+
+/** FR-035 / D-34: hide a default part, or show it again. Custom parts are deleted instead. */
+export async function setPartHidden(db: SQLiteDatabase, partId: string, hidden: boolean): Promise<void> {
+  const part = await db.getFirstAsync<{ templateCode: string | null }>(
+    'SELECT template_code AS templateCode FROM parts WHERE id = ? AND deleted_at IS NULL',
+    partId,
+  );
+  if (!part) throw new Error('Part was not found.');
+  if (part.templateCode === null) throw new Error('Custom parts are deleted, not hidden.');
+  await db.runAsync(
+    'UPDATE parts SET hidden_by = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL',
+    hidden ? 'user' : null,
+    new Date().toISOString(),
+    partId,
   );
 }
 
 export async function deleteCustomPart(db: SQLiteDatabase, partId: string): Promise<void> {
-  await getCustomPart(db, partId);
+  const part = await db.getFirstAsync<{ templateCode: string | null }>(
+    'SELECT template_code AS templateCode FROM parts WHERE id = ? AND deleted_at IS NULL',
+    partId,
+  );
+  if (!part || part.templateCode !== null) throw new Error('Custom part was not found.');
   await db.runAsync(
     'UPDATE parts SET deleted_at = ?, updated_at = ? WHERE id = ? AND template_code IS NULL',
     new Date().toISOString(),
@@ -185,11 +221,18 @@ export interface DashboardPart {
   isCustom: boolean;
 }
 
+export interface HiddenPart {
+  id: string;
+  name: string;
+  categoryName: string;
+}
+
 export interface DashboardData {
   carId: string;
   carName: string;
   currentOdometerKm: number;
   parts: DashboardPart[];
+  hiddenParts: HiddenPart[];
 }
 
 export interface ServiceHistoryRecord {
@@ -301,12 +344,21 @@ export async function getDashboard(db: SQLiteDatabase): Promise<DashboardData> {
        AND p.hidden_by IS NULL
      ORDER BY cat.sort_order, p.sort_order`,
   );
+  const hiddenParts = await db.getAllAsync<HiddenPart>(
+    `SELECT p.id, p.name, cat.name AS categoryName
+     FROM cars c
+     JOIN parts p ON p.car_id = c.id AND p.deleted_at IS NULL
+     JOIN categories cat ON cat.id = p.category_id
+     WHERE c.deleted_at IS NULL AND p.hidden_by IS NOT NULL
+     ORDER BY cat.sort_order, p.sort_order`,
+  );
 
   return {
     carId: car.carId,
     carName: car.carName,
     currentOdometerKm,
     parts: rows.map((row) => toDashboardPart(row, currentOdometerKm)),
+    hiddenParts,
   };
 }
 

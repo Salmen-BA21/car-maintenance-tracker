@@ -2,7 +2,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, AppState, FlatList, Linking, Pressable, Text, TextInput, View } from 'react-native';
 
-import { deleteOdometerEntry, getAppSettings, getDashboard, getOdometerHistory, updateOdometer, updateOdometerEntry, type DashboardData, type DashboardPart, type OdometerEntry } from '../data/repositories/car-repository';
+import { deleteOdometerEntry, getAppSettings, getDashboard, getOdometerHistory, setPartHidden, updateOdometer, updateOdometerEntry, type DashboardData, type DashboardPart, type OdometerEntry } from '../data/repositories/car-repository';
 import { needsAttention } from '../domain/attention';
 import type { PartStatus } from '../domain/status';
 import { afterWrite, getNotificationPermissionStatus } from '../notifications/notification-service';
@@ -21,6 +21,7 @@ export function DashboardScreen({ onPartPress, onAddCustomPart, onSettings }: { 
   const [newlyUrgent, setNewlyUrgent] = useState<DashboardPart[]>([]);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [reminderDenied, setReminderDenied] = useState(false);
+  const [showHidden, setShowHidden] = useState(false);
 
   const load = useCallback(async (): Promise<DashboardData | null> => {
     try {
@@ -128,6 +129,17 @@ export function DashboardScreen({ onPartPress, onAddCustomPart, onSettings }: { 
     }
   }
 
+  async function restorePart(partId: string) {
+    try {
+      setError('');
+      await setPartHidden(db, partId, false);
+      await afterWrite(db);
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not show this part.');
+    }
+  }
+
   const attention = useMemo(() => needsAttention(data?.parts ?? []), [data]);
   const groups = useMemo(() => {
     const grouped = new Map<string, DashboardPart[]>();
@@ -194,6 +206,10 @@ export function DashboardScreen({ onPartPress, onAddCustomPart, onSettings }: { 
           </View> : null}
           <Text style={styles.sectionTitle}>Maintenance</Text>
           <Pressable accessibilityRole="button" accessibilityLabel="Add custom part" onPress={() => onAddCustomPart(data.carId)} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>＋ Add custom part</Text></Pressable>
+          {data.hiddenParts.length > 0 ? <>
+            <Pressable accessibilityRole="button" accessibilityLabel={showHidden ? 'Hide hidden parts' : `Show ${data.hiddenParts.length} hidden parts`} onPress={() => setShowHidden((value) => !value)}><Text style={styles.linkText}>{showHidden ? 'Hide hidden parts' : `Show ${data.hiddenParts.length} hidden part${data.hiddenParts.length === 1 ? '' : 's'}`}</Text></Pressable>
+            {showHidden ? data.hiddenParts.map((part) => <View key={part.id} style={styles.dashboardRow}><View style={styles.partCopy}><Text style={styles.partName}>{part.name}</Text><Text style={styles.helper}>{part.categoryName}</Text></View><Pressable accessibilityRole="button" accessibilityLabel={`Show ${part.name}`} onPress={() => void restorePart(part.id)}><Text style={styles.linkText}>Show</Text></Pressable></View>) : null}
+          </> : null}
         </View>
       }
       renderItem={renderCategory}

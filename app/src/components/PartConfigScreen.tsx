@@ -2,14 +2,14 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput } from 'react-native';
 
-import { createCustomPart, getCustomPart, updateCustomPart, type CustomPart } from '../data/repositories/car-repository';
+import { createCustomPart, getPartConfig, updatePart, type PartConfig } from '../data/repositories/car-repository';
 import { afterWrite } from '../notifications/notification-service';
 import { ChoiceField, Field } from './ui';
 import { colors, styles } from './uiStyles';
 
 type IntervalType = 'distance' | 'time' | 'both' | 'condition';
 
-export function CustomPartScreen({ carId, partId, onDone }: { carId?: string; partId?: string; onDone: () => void }) {
+export function PartConfigScreen({ carId, partId, onDone }: { carId?: string; partId?: string; onDone: () => void }) {
   const db = useSQLiteContext();
   const [name, setName] = useState('');
   const [intervalType, setIntervalType] = useState<IntervalType>('distance');
@@ -22,15 +22,15 @@ export function CustomPartScreen({ carId, partId, onDone }: { carId?: string; pa
 
   useEffect(() => {
     if (!partId) return;
-    getCustomPart(db, partId)
-      .then((part: CustomPart) => {
+    getPartConfig(db, partId)
+      .then((part: PartConfig) => {
         setName(part.name);
         setIntervalType(part.intervalType);
         setDistance(part.distanceKm?.toString() ?? '');
         setMonths(part.months?.toString() ?? '');
         setInspectionMonths(part.inspectionMonths?.toString() ?? '');
       })
-      .catch((cause: unknown) => setError(cause instanceof Error ? cause.message : 'Could not load the custom part.'));
+      .catch((cause: unknown) => setError(cause instanceof Error ? cause.message : 'Could not load the part.'));
   }, [db, partId]);
 
   async function save() {
@@ -40,17 +40,17 @@ export function CustomPartScreen({ carId, partId, onDone }: { carId?: string; pa
       const input = {
         name,
         intervalType,
-        distanceKm: intervalType === 'distance' || intervalType === 'both' ? Number(distance) : null,
-        months: intervalType === 'time' || intervalType === 'both' ? Number(months) : null,
-        inspectionMonths: intervalType === 'condition' ? Number(inspectionMonths) : null,
+        distanceKm: (intervalType === 'distance' || intervalType === 'both') && distance.trim() ? Number(distance.trim()) : null,
+        months: (intervalType === 'time' || intervalType === 'both') && months.trim() ? Number(months.trim()) : null,
+        inspectionMonths: intervalType === 'condition' && inspectionMonths.trim() ? Number(inspectionMonths.trim()) : null,
       };
-      if (partId) await updateCustomPart(db, partId, input);
+      if (partId) await updatePart(db, partId, input);
       else if (carId) await createCustomPart(db, { carId, ...input });
       else throw new Error('Could not identify your car.');
       await afterWrite(db);
       onDone();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not save the custom part.');
+      setError(cause instanceof Error ? cause.message : 'Could not save the part.');
     } finally {
       setSaving(false);
     }
@@ -61,7 +61,7 @@ export function CustomPartScreen({ carId, partId, onDone }: { carId?: string; pa
       <Pressable accessibilityRole="button" accessibilityLabel="Back to dashboard" onPress={onDone}><Text style={styles.linkText}>Back to dashboard</Text></Pressable>
       <Text style={styles.kicker}>Your garage</Text>
       <Text style={styles.title}>{editing ? 'Edit part' : 'Add a part'}</Text>
-      <Text style={styles.intro}>Track something outside the default maintenance list.</Text>
+      <Text style={styles.intro}>{editing ? 'Change the name or how this part falls due.' : 'Track something outside the default maintenance list.'}</Text>
       <Field label="Part name">
         <TextInput accessibilityLabel="Part name" autoCapitalize="words" onChangeText={setName} placeholder="e.g. AC belt" placeholderTextColor={colors.muted} style={styles.input} value={name} />
       </Field>
@@ -75,7 +75,7 @@ export function CustomPartScreen({ carId, partId, onDone }: { carId?: string; pa
       {intervalType === 'time' || intervalType === 'both' ? <Field label="Time interval (months)"><TextInput accessibilityLabel="Time interval in months" keyboardType="number-pad" onChangeText={setMonths} placeholder="e.g. 12" placeholderTextColor={colors.muted} style={styles.input} value={months} /></Field> : null}
       {intervalType === 'condition' ? <Field label="Inspection interval (months)"><TextInput accessibilityLabel="Inspection interval in months" keyboardType="number-pad" onChangeText={setInspectionMonths} placeholder="e.g. 3" placeholderTextColor={colors.muted} style={styles.input} value={inspectionMonths} /></Field> : null}
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Pressable accessibilityRole="button" accessibilityLabel={editing ? 'Save custom part changes' : 'Add custom part'} accessibilityState={{ disabled: saving, busy: saving }} disabled={saving} onPress={save} style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed, saving && styles.disabled]}><Text style={styles.primaryButtonText}>{saving ? 'Saving…' : editing ? 'Save changes' : 'Add part'}</Text></Pressable>
+      <Pressable accessibilityRole="button" accessibilityLabel={editing ? 'Save part changes' : 'Add custom part'} accessibilityState={{ disabled: saving, busy: saving }} disabled={saving} onPress={save} style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed, saving && styles.disabled]}><Text style={styles.primaryButtonText}>{saving ? 'Saving…' : editing ? 'Save changes' : 'Add part'}</Text></Pressable>
     </ScrollView>
   );
 }

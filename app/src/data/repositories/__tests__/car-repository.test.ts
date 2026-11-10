@@ -1,4 +1,4 @@
-import { addServiceRecord, createCustomPart, deleteOdometerEntry, updateOdometer, updateOdometerEntry, updateServiceRecord } from '../car-repository';
+import { addServiceRecord, createCustomPart, deleteOdometerEntry, saveAppSettings, updateOdometer, updateOdometerEntry, updateServiceRecord } from '../car-repository';
 import type { SQLiteDatabase } from 'expo-sqlite';
 
 type FakeDatabase = {
@@ -102,6 +102,22 @@ describe('car repository write rules', () => {
       months: null,
       inspectionMonths: null,
     })).rejects.toThrow('interval values');
+    expect(db.runAsync).not.toHaveBeenCalled();
+  });
+
+  test('rejects malformed settings before writing', async () => {
+    const db = database();
+
+    await expect(saveAppSettings(db as unknown as SQLiteDatabase, {
+      remindersEnabled: true,
+      reminderTime: '9:00',
+      currency: 'EUR',
+    })).rejects.toThrow('HH:MM');
+    await expect(saveAppSettings(db as unknown as SQLiteDatabase, {
+      remindersEnabled: true,
+      reminderTime: '20:00',
+      currency: 'EU',
+    })).rejects.toThrow('three-letter');
     expect(db.runAsync).not.toHaveBeenCalled();
   });
 

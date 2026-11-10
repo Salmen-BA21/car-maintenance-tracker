@@ -44,6 +44,21 @@ export async function saveAppSettings(db: SQLiteDatabase, settings: AppSettings)
   );
 }
 
+export async function hasSeenOnboarding(db: SQLiteDatabase): Promise<boolean> {
+  const row = await db.getFirstAsync<{ seen: number }>('SELECT onboarding_seen AS seen FROM app_settings WHERE id = 1');
+  return row?.seen === 1;
+}
+
+export async function setOnboardingSeen(db: SQLiteDatabase): Promise<void> {
+  await db.runAsync('UPDATE app_settings SET onboarding_seen = 1, updated_at = ? WHERE id = 1', new Date().toISOString());
+}
+
+export async function getActiveCar(db: SQLiteDatabase): Promise<{ id: string; name: string } | null> {
+  return db.getFirstAsync<{ id: string; name: string }>(
+    'SELECT id, name FROM cars WHERE deleted_at IS NULL ORDER BY created_at LIMIT 1',
+  );
+}
+
 export async function exportLocalData(db: SQLiteDatabase): Promise<string> {
   const [cars, categories, parts, odometerEntries, serviceRecords, settings] = await Promise.all([
     db.getAllAsync('SELECT * FROM cars WHERE deleted_at IS NULL'),
@@ -215,8 +230,9 @@ export interface DashboardPart {
   inspectionDue: boolean;
   /** Condition-based parts only: when the next inspection falls due. */
   inspectionDueDate: LocalDate | null;
-  /** Date of the active service record; used to place part alerts. */
+  /** Date and odometer of the active service record. */
   serviceDate: LocalDate | null;
+  serviceKm: number | null;
   includeInReminders: boolean;
   isCustom: boolean;
 }
@@ -248,6 +264,8 @@ export interface ServiceHistoryRecord {
 
 export interface PartDetail {
   part: DashboardPart;
+  carName: string;
+  currentOdometerKm: number;
   history: ServiceHistoryRecord[];
 }
 
@@ -299,6 +317,7 @@ function toDashboardPart(row: DashboardRow, currentOdometerKm: number): Dashboar
     inspectionDue: inspection !== null && isInspectionDue(inspection, today),
     inspectionDueDate: inspection === null ? null : inspectionDueDate(inspection),
     serviceDate: row.serviceDate,
+    serviceKm: row.serviceKm,
     includeInReminders: Boolean(row.includeInReminders),
   };
 }
@@ -535,6 +554,8 @@ export async function getPartDetail(db: SQLiteDatabase, partId: string): Promise
     );
     return {
       part: toDashboardPart(row, row.currentOdometerKm),
+      carName: row.carName,
+      currentOdometerKm: row.currentOdometerKm,
       history: history.map((record) => ({ ...record, isBaseline: Boolean(record.isBaseline) })),
     };
   }

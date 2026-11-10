@@ -162,18 +162,22 @@ const SCHEMA_V2 = `
   CREATE TABLE app_settings (
     id INTEGER PRIMARY KEY CHECK (id = 1),
     reminders_enabled INTEGER NOT NULL DEFAULT 0 CHECK (reminders_enabled IN (0, 1)),
-    reminder_time TEXT NOT NULL DEFAULT '09:00' CHECK (reminder_time GLOB '[0-2][0-9]:[0-5][0-9]'),
+    reminder_time TEXT NOT NULL DEFAULT '20:00' CHECK (reminder_time GLOB '[0-2][0-9]:[0-5][0-9]'),
     currency TEXT NOT NULL DEFAULT 'EUR' CHECK (currency GLOB '[A-Z][A-Z][A-Z]'),
     updated_at TEXT NOT NULL
   );
 `;
 
-export async function migrateDbIfNeeded(db: SQLiteDatabase): Promise<void> {
+export async function migrateDbIfNeeded(db: SQLiteDatabase, defaults: { currency?: string } = {}): Promise<void> {
   await db.execAsync('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;');
 
   const version = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
   if (version === null) throw new Error('Could not read the database schema version.');
-  if (version.user_version > 2) throw new Error('Database schema is newer than this app supports.');
+  if (version.user_version > 4) throw new Error('Database schema is newer than this app supports.');
+  const isUpgrade = version.user_version > 0;
+
+  const deviceCurrency = defaults.currency?.toUpperCase();
+  const initialCurrency = deviceCurrency && /^[A-Z]{3}$/.test(deviceCurrency) ? deviceCurrency : 'EUR';
 
   await db.withTransactionAsync(async () => {
     if (version.user_version === 0) {
@@ -185,11 +189,35 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase): Promise<void> {
     if (version.user_version < 2) {
       await db.execAsync(SCHEMA_V2);
       await db.runAsync(
-        `INSERT INTO app_settings (id, updated_at) VALUES (1, ?)`,
+        `INSERT INTO app_settings (id, currency, updated_at) VALUES (1, ?, ?)`,
+        initialCurrency,
         new Date().toISOString(),
       );
       await db.runAsync('INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)', 2, new Date().toISOString());
       await db.execAsync('PRAGMA user_version = 2');
+    }
+    if (version.user_version < 3) {
+      // Move installs that still carry the old 09:00 default to the documented 20:00.
+      await db.runAsync(
+        `UPDATE app_settings SET reminder_time = '20:00', updated_at = ? WHERE id = 1 AND reminder_time = '09:00'`,
+        new Date().toISOString(),
+      );
+      await db.runAsync('INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)', 3, new Date().toISOString());
+      await db.execAsync('PRAGMA user_version = 3');
+    }
+    if (version.user_version < 4) {
+      const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(app_settings)');
+      if (!columns.some((column) => column.name === 'onboarding_seen')) {
+        await db.execAsync(
+          'ALTER TABLE app_settings ADD COLUMN onboarding_seen INTEGER NOT NULL DEFAULT 0 CHECK (onboarding_seen IN (0, 1))',
+        );
+      }
+      // Existing installs have already learned the app; only new installs see onboarding.
+      if (isUpgrade) {
+        await db.runAsync('UPDATE app_settings SET onboarding_seen = 1 WHERE id = 1');
+      }
+      await db.runAsync('INSERT OR IGNORE INTO schema_migrations (version, applied_at) VALUES (?, ?)', 4, new Date().toISOString());
+      await db.execAsync('PRAGMA user_version = 4');
     }
   });
 }

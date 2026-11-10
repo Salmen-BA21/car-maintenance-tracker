@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import type { SQLiteDatabase } from 'expo-sqlite';
 
-import { addInspection, addServiceRecord, createCar, createCustomPart, deleteCustomPart, deleteOdometerEntry, deleteServiceRecord, exportLocalData, getDashboard, getOdometerHistory, getPartConfig, getPartDetail, hasOdometerEntryToday, setPartAlerts, setPartHidden, updateOdometer, updateOdometerEntry, updatePart, updateServiceRecord } from '../../repositories/car-repository';
+import { addInspection, addServiceRecord, createCar, createCustomPart, deleteCustomPart, deleteOdometerEntry, deleteServiceRecord, exportLocalData, getDashboard, getOdometerHistory, getPartConfig, getPartDetail, hasOdometerEntryToday, hasSeenOnboarding, setOnboardingSeen, setPartAlerts, setPartHidden, updateOdometer, updateOdometerEntry, updatePart, updateServiceRecord } from '../../repositories/car-repository';
 import { jsDateToLocalDate } from '../../../domain/local-date';
 import { migrateDbIfNeeded } from '../migrations';
 
@@ -346,6 +346,29 @@ describe('SQLite schema and repository integration', () => {
     const inspectedDetail = await getPartDetail(db, conditionPart);
     expect(inspectedDetail.history[0].serviceDate).toBe(today);
     expect(inspectedDetail.part.inspectionDue).toBe(false);
+    database.raw.close();
+  });
+
+  test('seeds documented settings defaults and upgrades the old reminder time', async () => {
+    const database = openTestDatabase();
+    const db = database as unknown as SQLiteDatabase;
+
+    await migrateDbIfNeeded(db, { currency: 'TND' });
+    expect(database.raw.prepare('SELECT reminder_time AS reminderTime, currency FROM app_settings WHERE id = 1').get()).toEqual({
+      reminderTime: '20:00',
+      currency: 'TND',
+    });
+    expect(await hasSeenOnboarding(db)).toBe(false);
+    await setOnboardingSeen(db);
+    expect(await hasSeenOnboarding(db)).toBe(true);
+
+    database.raw.prepare(`UPDATE app_settings SET reminder_time = '09:00' WHERE id = 1`).run();
+    database.raw.prepare('DELETE FROM schema_migrations WHERE version = 3').run();
+    database.raw.pragma('user_version = 2');
+    await migrateDbIfNeeded(db);
+    expect(database.raw.prepare('SELECT reminder_time AS reminderTime FROM app_settings WHERE id = 1').get()).toEqual({
+      reminderTime: '20:00',
+    });
     database.raw.close();
   });
 

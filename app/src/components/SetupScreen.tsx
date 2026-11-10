@@ -1,15 +1,16 @@
 import { useSQLiteContext } from 'expo-sqlite';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
 
 import { CarInputError } from '../data/repositories/car-input';
 import { createCar } from '../data/repositories/car-repository';
 import { jsDateToLocalDate } from '../domain/local-date';
-import { ChoiceField, Field } from './ui';
-import { colors, styles } from './uiStyles';
+import { AppText, Button, Card, InlineError, PageHeader, TextField, Toggle } from '../ui/kit';
+import { useTheme } from '../ui/theme';
 
 export function SetupScreen({ onCreated }: { onCreated: (carId: string) => void }) {
   const db = useSQLiteContext();
+  const theme = useTheme();
   const [name, setName] = useState('');
   const [fuelType, setFuelType] = useState<'petrol' | 'diesel'>('petrol');
   const [timingDrive, setTimingDrive] = useState<'belt' | 'chain'>('belt');
@@ -38,29 +39,73 @@ export function SetupScreen({ onCreated }: { onCreated: (carId: string) => void 
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.kicker}>Your garage</Text>
-        <Text style={styles.title}>Set up your car</Text>
-        <Text style={styles.intro}>Start with the details that shape your maintenance schedule.</Text>
-        <Field label="Car name">
-          <TextInput accessibilityLabel="Car name" autoCapitalize="words" onChangeText={setName} placeholder="e.g. Daily driver" placeholderTextColor={colors.muted} style={styles.input} value={name} />
-        </Field>
-        <ChoiceField label="Fuel type" options={[['petrol', 'Petrol'], ['diesel', 'Diesel']]} selected={fuelType} onSelect={(value) => { setFuelType(value as 'petrol' | 'diesel'); if (value === 'petrol') setHasDpf(false); }} />
-        <ChoiceField label="Timing drive" options={[['belt', 'Belt'], ['chain', 'Chain']]} selected={timingDrive} onSelect={(value) => setTimingDrive(value as 'belt' | 'chain')} />
-        <ChoiceField label="Gearbox" options={[['manual', 'Manual'], ['automatic', 'Automatic']]} selected={gearbox} onSelect={(value) => setGearbox(value as 'manual' | 'automatic')} />
-        <View style={styles.switchRow}>
-          <View style={styles.switchCopy}><Text style={styles.label}>Diesel particulate filter</Text><Text style={styles.helper}>Only applies to diesel cars.</Text></View>
-          <Switch accessibilityLabel="Diesel particulate filter" disabled={fuelType !== 'diesel'} onValueChange={setHasDpf} trackColor={{ false: colors.line, true: colors.accent }} value={hasDpf} />
-        </View>
-        <Field label="Current odometer (km)">
-          <TextInput accessibilityLabel="Current odometer in kilometres" keyboardType="number-pad" onChangeText={setOdometer} placeholder="e.g. 128500" placeholderTextColor={colors.muted} style={styles.input} value={odometer} />
-        </Field>
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Pressable accessibilityRole="button" accessibilityState={{ disabled: saving }} disabled={saving} onPress={submit} style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed, saving && styles.disabled]}>
-          <Text style={styles.primaryButtonText}>{saving ? 'Saving…' : 'Save car'}</Text>
-        </Pressable>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ gap: 22, padding: 20, paddingBottom: 34 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <PageHeader eyebrow="Your garage" subtitle="Start with the details that shape your maintenance schedule." title="Set up your car" />
+
+        <TextField accessibilityLabel="Car name" autoCapitalize="words" label="Car name" onChangeText={setName} placeholder="e.g. Golf 4" value={name} />
+        <Choices label="Fuel type" onSelect={(value) => { setFuelType(value as 'petrol' | 'diesel'); if (value === 'petrol') setHasDpf(false); }} options={[['petrol', 'Petrol'], ['diesel', 'Diesel']]} selected={fuelType} />
+        <Choices label="Timing drive" onSelect={(value) => setTimingDrive(value as 'belt' | 'chain')} options={[['belt', 'Belt'], ['chain', 'Chain']]} selected={timingDrive} />
+        <Choices label="Gearbox" onSelect={(value) => setGearbox(value as 'manual' | 'automatic')} options={[['manual', 'Manual'], ['automatic', 'Automatic']]} selected={gearbox} />
+
+        <Card style={{ alignItems: 'center', flexDirection: 'row', gap: 12, paddingLeft: 18, paddingRight: 8, paddingVertical: 14 }}>
+          <View style={{ flex: 1, gap: 3 }}>
+            <AppText style={{ fontFamily: theme.font.extrabold, fontSize: 16 }}>Diesel particulate filter</AppText>
+            <AppText color={theme.muted} style={{ fontFamily: theme.font.semibold, fontSize: 13 }}>Only applies to diesel cars.</AppText>
+          </View>
+          <Toggle disabled={fuelType !== 'diesel'} label="Diesel particulate filter" onChange={setHasDpf} value={hasDpf} />
+        </Card>
+
+        <TextField accessibilityLabel="Current odometer in kilometres" keyboardType="number-pad" label="Current odometer" onChangeText={setOdometer} placeholder="e.g. 128500" suffix="km" value={odometer} />
+        {error ? <InlineError>{error}</InlineError> : null}
+        <Button disabled={saving} onPress={() => void submit()} title={saving ? 'Saving…' : 'Save car'} />
       </ScrollView>
     </KeyboardAvoidingView>
+  );
+}
+
+function Choices({
+  label,
+  options,
+  selected,
+  onSelect,
+}: {
+  label: string;
+  options: [string, string][];
+  selected: string;
+  onSelect: (value: string) => void;
+}) {
+  const theme = useTheme();
+  return (
+    <View style={{ gap: 8 }}>
+      <AppText variant="label">{label}</AppText>
+      <View style={{ flexDirection: 'row', gap: 10 }}>
+        {options.map(([value, text]) => {
+          const active = selected === value;
+          return (
+            <Pressable
+              accessibilityLabel={text}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: active }}
+              key={value}
+              onPress={() => onSelect(value)}
+              style={({ pressed }) => ({
+                alignItems: 'center',
+                backgroundColor: active ? theme.tint : theme.card,
+                borderColor: active ? theme.highlight : theme.border,
+                borderRadius: theme.radius.field,
+                borderWidth: active ? 2 : 1.5,
+                flex: 1,
+                height: 52,
+                justifyContent: 'center',
+                opacity: pressed ? 0.82 : 1,
+              })}
+            >
+              <AppText style={{ color: active ? theme.highlight : theme.ink, fontFamily: theme.font.bold, fontSize: 15 }}>{text}</AppText>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
   );
 }

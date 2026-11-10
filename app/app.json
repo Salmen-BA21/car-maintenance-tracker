@@ -6,7 +6,7 @@
     "scheme": "carmaint",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.salmen.carmaintenance",
       "supportsTablet": false
@@ -28,7 +28,8 @@
       "expo-router",
       "expo-sqlite",
       "expo-notifications",
-      "expo-sharing"
+      "expo-sharing",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true

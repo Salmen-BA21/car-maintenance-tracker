@@ -1,15 +1,20 @@
+import Constants from 'expo-constants';
+import { File, Paths } from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
-import * as Sharing from 'expo-sharing';
-import { File, Paths } from 'expo-file-system';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { exportLocalData, getAppSettings, saveAppSettings, type AppSettings } from '../data/repositories/car-repository';
 import { rebuildNotifications } from '../notifications/notification-service';
-import { colors, styles } from './uiStyles';
+import { AppText, Button, Card, InlineError, PageHeader, TextField, Toggle } from '../ui/kit';
+import { useTheme } from '../ui/theme';
 
-export function SettingsScreen({ onBack }: { onBack: () => void }) {
+const CURRENCIES = ['EUR', 'USD', 'TND'];
+
+export function SettingsScreen() {
   const db = useSQLiteContext();
+  const theme = useTheme();
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
@@ -27,8 +32,16 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
     if (!settings) return;
     try {
       setError('');
-      await saveAppSettings(db, settings);
-      const status = await rebuildNotifications(db, { requestPermission: settings.remindersEnabled });
+      const next = {
+        ...settings,
+        reminderTime: settings.reminderTime.trim(),
+        currency: settings.currency.trim().toUpperCase(),
+      };
+      if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(next.reminderTime)) throw new Error('Reminder time must use HH:MM, e.g. 20:00.');
+      if (!/^[A-Z]{3}$/.test(next.currency)) throw new Error('Currency must be a three-letter code, e.g. EUR.');
+      setSettings(next);
+      await saveAppSettings(db, next);
+      const status = await rebuildNotifications(db, { requestPermission: next.remindersEnabled });
       setSaved(status !== 'denied');
       if (status === 'denied') setError('Notifications are blocked. Enable them in your device settings.');
     } catch (cause) {
@@ -52,25 +65,85 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
     }
   }
 
-  if (!settings) return <View style={styles.loading}><Text style={styles.title}>{error || 'Loading settings…'}</Text></View>;
-  return (
-    <ScrollView contentContainerStyle={styles.content} style={styles.screen}>
-      <Pressable onPress={onBack}><Text style={styles.linkText}>Back to dashboard</Text></Pressable>
-      <Text style={styles.kicker}>Preferences</Text>
-      <Text style={styles.title}>Settings</Text>
-      <Text style={styles.intro}>Choose how your local reminders and costs behave.</Text>
-      <View style={styles.switchRow}>
-        <View style={styles.switchCopy}><Text style={styles.label}>Maintenance reminders</Text><Text style={styles.helper}>Notifications are requested only when enabled.</Text></View>
-        <Switch accessibilityLabel="Maintenance reminders" onValueChange={(value) => setSettings({ ...settings, remindersEnabled: value })} trackColor={{ false: colors.line, true: colors.accent }} value={settings.remindersEnabled} />
+  if (!settings) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', padding: 24 }}>
+        <AppText variant="display">{error || 'Loading settings…'}</AppText>
       </View>
-      <Text style={styles.label}>Reminder time</Text>
-      <TextInput accessibilityLabel="Reminder time" onChangeText={(value) => setSettings({ ...settings, reminderTime: value })} placeholder="09:00" placeholderTextColor={colors.muted} style={styles.input} value={settings.reminderTime} />
-      <Text style={styles.label}>Currency</Text>
-      <TextInput accessibilityLabel="Currency" autoCapitalize="characters" maxLength={3} onChangeText={(value) => setSettings({ ...settings, currency: value.toUpperCase() })} placeholder="EUR" placeholderTextColor={colors.muted} style={styles.input} value={settings.currency} />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      {saved ? <Text style={styles.success}>Settings saved.</Text> : null}
-      <Pressable onPress={save} style={styles.primaryButton}><Text style={styles.primaryButtonText}>Save settings</Text></Pressable>
-      <Pressable disabled={exporting} onPress={exportData} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>{exporting ? 'Preparing export…' : 'Export data as JSON'}</Text></Pressable>
+    );
+  }
+
+  return (
+    <ScrollView
+      automaticallyAdjustKeyboardInsets
+      contentContainerStyle={{ gap: 22, padding: 20, paddingBottom: 34 }}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      style={{ flex: 1 }}
+    >
+      <PageHeader eyebrow="Preferences" subtitle="Choose how your local reminders and costs behave." title="Settings" />
+
+      <Card style={{ alignItems: 'center', flexDirection: 'row', gap: 12, paddingLeft: 18, paddingRight: 8, paddingVertical: 14 }}>
+        <View style={{ flex: 1, gap: 3 }}>
+          <AppText style={{ fontFamily: theme.font.extrabold, fontSize: 16 }}>Maintenance reminders</AppText>
+          <AppText color={theme.muted} style={{ fontFamily: theme.font.semibold, fontSize: 13, lineHeight: 18 }}>
+            Notifications are requested only when enabled.
+          </AppText>
+        </View>
+        <Toggle label="Maintenance reminders" onChange={(value) => setSettings({ ...settings, remindersEnabled: value })} value={settings.remindersEnabled} />
+      </Card>
+
+      <TextField
+        accessibilityLabel="Reminder time"
+        autoCapitalize="none"
+        label="Reminder time"
+        maxLength={5}
+        onChangeText={(value) => setSettings({ ...settings, reminderTime: value })}
+        placeholder="20:00"
+        value={settings.reminderTime}
+      />
+
+      <View style={{ gap: 8 }}>
+        <AppText variant="label">Currency</AppText>
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          {CURRENCIES.map((currency) => {
+            const selected = settings.currency === currency;
+            return (
+              <Pressable
+                accessibilityLabel={currency}
+                accessibilityRole="radio"
+                accessibilityState={{ selected }}
+                key={currency}
+                onPress={() => setSettings({ ...settings, currency })}
+                style={({ pressed }) => ({
+                  alignItems: 'center',
+                  backgroundColor: selected ? theme.tint : theme.card,
+                  borderColor: selected ? theme.highlight : theme.border,
+                  borderRadius: theme.radius.field,
+                  borderWidth: selected ? 2 : 1.5,
+                  flex: 1,
+                  height: 56,
+                  justifyContent: 'center',
+                  opacity: pressed ? 0.82 : 1,
+                })}
+              >
+                <AppText style={{ color: selected ? theme.highlight : theme.ink, fontFamily: theme.font.extrabold, fontSize: 16 }}>{currency}</AppText>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
+      {error ? <InlineError>{error}</InlineError> : null}
+      {saved ? <AppText color={theme.ok} style={{ fontFamily: theme.font.bold, fontSize: 15 }}>Settings saved.</AppText> : null}
+
+      <View style={{ gap: 12 }}>
+        <Button onPress={() => void save()} title="Save settings" />
+        <Button icon="download" onPress={() => void exportData()} title={exporting ? 'Preparing export…' : 'Export data as JSON'} variant="secondary" />
+        <AppText align="center" color={theme.muted} style={{ fontFamily: theme.font.semibold, fontSize: 13, marginTop: 4 }}>
+          App version {Constants.expoConfig?.version ?? 'unknown'}
+        </AppText>
+      </View>
     </ScrollView>
   );
 }

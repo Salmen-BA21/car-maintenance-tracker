@@ -1,16 +1,25 @@
+import { Feather } from '@expo/vector-icons';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { createCustomPart, getPartConfig, updatePart, type PartConfig } from '../data/repositories/car-repository';
 import { afterWrite } from '../notifications/notification-service';
-import { ChoiceField, Field } from './ui';
-import { colors, styles } from './uiStyles';
+import { AppText, Button, InlineError, PageHeader, TextField } from '../ui/kit';
+import { useTheme } from '../ui/theme';
 
 type IntervalType = 'distance' | 'time' | 'both' | 'condition';
 
-export function PartConfigScreen({ carId, partId, onDone }: { carId?: string; partId?: string; onDone: () => void }) {
+const OPTIONS: { id: IntervalType; label: string; description: string }[] = [
+  { id: 'distance', label: 'Distance', description: 'Every X km' },
+  { id: 'time', label: 'Time', description: 'Every X months' },
+  { id: 'both', label: 'Both', description: 'Whichever comes first' },
+  { id: 'condition', label: 'Inspect', description: 'Check, don’t replace' },
+];
+
+export function PartConfigScreen({ carId, partId, carName, onDone }: { carId?: string; partId?: string; carName?: string; onDone: () => void }) {
   const db = useSQLiteContext();
+  const theme = useTheme();
   const [name, setName] = useState('');
   const [intervalType, setIntervalType] = useState<IntervalType>('distance');
   const [distance, setDistance] = useState('');
@@ -57,25 +66,74 @@ export function PartConfigScreen({ carId, partId, onDone }: { carId?: string; pa
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.content} style={styles.screen}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Back to dashboard" onPress={onDone}><Text style={styles.linkText}>Back to dashboard</Text></Pressable>
-      <Text style={styles.kicker}>Your garage</Text>
-      <Text style={styles.title}>{editing ? 'Edit part' : 'Add a part'}</Text>
-      <Text style={styles.intro}>{editing ? 'Change the name or how this part falls due.' : 'Track something outside the default maintenance list.'}</Text>
-      <Field label="Part name">
-        <TextInput accessibilityLabel="Part name" autoCapitalize="words" onChangeText={setName} placeholder="e.g. AC belt" placeholderTextColor={colors.muted} style={styles.input} value={name} />
-      </Field>
-      <ChoiceField
-        label="How is it due?"
-        options={[['distance', 'Distance'], ['time', 'Time'], ['both', 'Both'], ['condition', 'Inspect']]}
-        selected={intervalType}
-        onSelect={(value) => setIntervalType(value as IntervalType)}
+    <ScrollView
+      automaticallyAdjustKeyboardInsets
+      contentContainerStyle={{ gap: 22, padding: 20, paddingBottom: 34 }}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      style={{ flex: 1 }}
+    >
+      <PageHeader
+        backLabel={editing ? 'Dashboard' : undefined}
+        eyebrow={carName ?? 'Your garage'}
+        onBack={editing ? onDone : undefined}
+        subtitle={editing ? 'Change the name or how this part falls due.' : 'Track something outside the default maintenance list.'}
+        title={editing ? 'Edit part' : 'Add a part'}
       />
-      {intervalType === 'distance' || intervalType === 'both' ? <Field label="Distance interval (km)"><TextInput accessibilityLabel="Distance interval in kilometres" keyboardType="number-pad" onChangeText={setDistance} placeholder="e.g. 20000" placeholderTextColor={colors.muted} style={styles.input} value={distance} /></Field> : null}
-      {intervalType === 'time' || intervalType === 'both' ? <Field label="Time interval (months)"><TextInput accessibilityLabel="Time interval in months" keyboardType="number-pad" onChangeText={setMonths} placeholder="e.g. 12" placeholderTextColor={colors.muted} style={styles.input} value={months} /></Field> : null}
-      {intervalType === 'condition' ? <Field label="Inspection interval (months)"><TextInput accessibilityLabel="Inspection interval in months" keyboardType="number-pad" onChangeText={setInspectionMonths} placeholder="e.g. 3" placeholderTextColor={colors.muted} style={styles.input} value={inspectionMonths} /></Field> : null}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Pressable accessibilityRole="button" accessibilityLabel={editing ? 'Save part changes' : 'Add custom part'} accessibilityState={{ disabled: saving, busy: saving }} disabled={saving} onPress={save} style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed, saving && styles.disabled]}><Text style={styles.primaryButtonText}>{saving ? 'Saving…' : editing ? 'Save changes' : 'Add part'}</Text></Pressable>
+
+      <TextField accessibilityLabel="Part name" autoCapitalize="words" label="Part name" onChangeText={setName} placeholder="e.g. AC belt" value={name} />
+
+      <View style={{ gap: 8 }}>
+        <AppText variant="label">How is it due?</AppText>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+          {OPTIONS.map((option) => {
+            const selected = intervalType === option.id;
+            return (
+              <Pressable
+                accessibilityLabel={`${option.label}, ${option.description}`}
+                accessibilityRole="radio"
+                accessibilityState={{ selected }}
+                key={option.id}
+                onPress={() => setIntervalType(option.id)}
+                style={({ pressed }) => ({
+                  backgroundColor: selected ? theme.tint : theme.card,
+                  borderColor: selected ? theme.highlight : theme.border,
+                  borderRadius: theme.radius.card,
+                  borderWidth: selected ? 2 : 1.5,
+                  gap: 3,
+                  minHeight: 76,
+                  opacity: pressed ? 0.82 : 1,
+                  paddingHorizontal: 14,
+                  paddingVertical: 12,
+                  position: 'relative',
+                  width: '48%',
+                })}
+              >
+                <AppText style={{ fontFamily: theme.font.extrabold, fontSize: 16 }}>{option.label}</AppText>
+                <AppText color={theme.muted} style={{ fontFamily: theme.font.semibold, fontSize: 13 }}>{option.description}</AppText>
+                {selected ? (
+                  <View style={{ position: 'absolute', right: 10, top: 10 }}>
+                    <Feather color={theme.highlight} name="check-circle" size={20} />
+                  </View>
+                ) : null}
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
+      {intervalType === 'distance' || intervalType === 'both' ? (
+        <TextField accessibilityLabel="Distance interval in kilometres" keyboardType="number-pad" label="Distance interval" onChangeText={setDistance} placeholder="e.g. 20000" suffix="km" value={distance} />
+      ) : null}
+      {intervalType === 'time' || intervalType === 'both' ? (
+        <TextField accessibilityLabel="Time interval in months" keyboardType="number-pad" label="Time interval" onChangeText={setMonths} placeholder="e.g. 12" suffix="months" value={months} />
+      ) : null}
+      {intervalType === 'condition' ? (
+        <TextField accessibilityLabel="Inspection interval in months" keyboardType="number-pad" label="Inspection interval" onChangeText={setInspectionMonths} placeholder="e.g. 3" suffix="months" value={inspectionMonths} />
+      ) : null}
+
+      {error ? <InlineError>{error}</InlineError> : null}
+      <Button disabled={saving} onPress={() => void save()} title={saving ? 'Saving…' : editing ? 'Save changes' : 'Add part'} />
     </ScrollView>
   );
 }

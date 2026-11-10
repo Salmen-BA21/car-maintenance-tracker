@@ -1,13 +1,15 @@
 import { useSQLiteContext } from 'expo-sqlite';
-import { useEffect, useState } from 'react';
-import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 
 import { getSetupParts, saveBaselineRecords, type SetupPart } from '../data/repositories/car-repository';
 import { jsDateToLocalDate } from '../domain/local-date';
-import { colors, styles } from './uiStyles';
+import { AppText, Button, Card, InlineError, PageHeader, TextField } from '../ui/kit';
+import { useTheme } from '../ui/theme';
 
 export function BaselineScreen({ carId, onDone }: { carId: string; onDone: () => void }) {
   const db = useSQLiteContext();
+  const theme = useTheme();
   const [parts, setParts] = useState<SetupPart[]>([]);
   const [values, setValues] = useState<Record<string, { km: string; date: string }>>({});
   const [error, setError] = useState('');
@@ -19,9 +21,31 @@ export function BaselineScreen({ carId, onDone }: { carId: string; onDone: () =>
       .catch((cause: unknown) => setError(cause instanceof Error ? cause.message : 'Could not load parts.'));
   }, [carId, db]);
 
-  function update(partId: string, field: 'km' | 'date', value: string) {
+  const update = useCallback((partId: string, field: 'km' | 'date', value: string) => {
     setValues((current) => ({ ...current, [partId]: { ...current[partId], [field]: value } }));
-  }
+  }, []);
+
+  const partNameStyle = useMemo(() => ({ fontFamily: theme.font.extrabold, fontSize: 16 }), [theme]);
+
+  const renderItem = useCallback(({ item: part }: { item: SetupPart }) => (
+    <Card style={styles.card}>
+      <AppText style={partNameStyle}>{part.name}</AppText>
+      <TextField
+        accessibilityLabel={`${part.name} last service kilometres`}
+        keyboardType="number-pad"
+        onChangeText={(value) => update(part.id, 'km', value)}
+        placeholder="Last km"
+        suffix="km"
+        value={values[part.id]?.km ?? ''}
+      />
+      <TextField
+        accessibilityLabel={`${part.name} last service date`}
+        onChangeText={(value) => update(part.id, 'date', value)}
+        placeholder="YYYY-MM-DD"
+        value={values[part.id]?.date ?? ''}
+      />
+    </Card>
+  ), [partNameStyle, update, values]);
 
   async function save(allToday = false) {
     setError('');
@@ -40,20 +64,30 @@ export function BaselineScreen({ carId, onDone }: { carId: string; onDone: () =>
 
   return (
     <FlatList
-      contentContainerStyle={styles.content}
+      automaticallyAdjustKeyboardInsets
+      contentContainerStyle={{ gap: 14, padding: 20, paddingBottom: 34 }}
       data={parts}
       keyExtractor={(part) => part.id}
-      ListFooterComponent={<><>{error ? <Text style={styles.error}>{error}</Text> : null}</><Pressable disabled={saving} onPress={() => save(false)} style={styles.primaryButton}><Text style={styles.primaryButtonText}>{saving ? 'Saving…' : 'Save history'}</Text></Pressable><Pressable disabled={saving} onPress={() => save(true)} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>All serviced today</Text></Pressable></>}
-      ListHeaderComponent={<><Text style={styles.kicker}>One last step</Text><Text style={styles.title}>Add service history</Text><Text style={styles.intro}>Enter what you know. Leave a part blank to show it as unknown.</Text></>}
-      renderItem={renderPart}
-      style={styles.screen}
+      ListFooterComponent={
+        <View style={{ gap: 12, marginTop: 8 }}>
+          {error ? <InlineError>{error}</InlineError> : null}
+          <Button disabled={saving} onPress={() => void save(false)} title={saving ? 'Saving…' : 'Save history'} />
+          <Button disabled={saving} onPress={() => void save(true)} title="All serviced today" variant="secondary" />
+        </View>
+      }
+      ListHeaderComponent={
+        <View style={{ gap: 8, marginBottom: 8 }}>
+          <PageHeader eyebrow="One last step" subtitle="Enter what you know. Leave a part blank to show it as unknown." title="Add service history" />
+        </View>
+      }
+      renderItem={renderItem}
     />
   );
-
-  function renderPart({ item: part }: { item: SetupPart }) {
-    return <View style={styles.partRow}><Text style={styles.partName}>{part.name}</Text><TextInput accessibilityLabel={`${part.name} last service kilometres`} keyboardType="number-pad" onChangeText={(value) => update(part.id, 'km', value)} placeholder="Last km" placeholderTextColor={colors.muted} style={styles.partInput} value={values[part.id]?.km ?? ''} /><TextInput accessibilityLabel={`${part.name} last service date`} onChangeText={(value) => update(part.id, 'date', value)} placeholder="YYYY-MM-DD" placeholderTextColor={colors.muted} style={styles.partInput} value={values[part.id]?.date ?? ''} /></View>;
-  }
 }
+
+const styles = StyleSheet.create({
+  card: { gap: 12 },
+});
 
 function parseOptionalNumber(value: string | undefined): number | null {
   if (!value?.trim()) return null;

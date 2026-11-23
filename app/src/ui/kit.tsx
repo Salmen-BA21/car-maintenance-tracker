@@ -1,10 +1,8 @@
+import { BottomSheet as NativeBottomSheet, RNHostView } from '@expo/ui';
 import { Feather } from '@expo/vector-icons';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -438,48 +436,29 @@ export function BottomSheet({
   children: ReactNode;
 }) {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
-  const side = Math.max(0, (width - 640) / 2);
   return (
-    <Modal animationType="slide" onRequestClose={onClose} statusBarTranslucent transparent visible={visible}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-          <Pressable accessibilityLabel={`Close ${title}`} accessibilityRole="button" onPress={onClose} style={{ backgroundColor: theme.scrim, bottom: 0, left: 0, position: 'absolute', right: 0, top: 0 }} />
-          <View
-            accessibilityLabel={title}
-            accessibilityViewIsModal
-            style={{
-              backgroundColor: theme.card,
-              borderColor: theme.line,
-              borderTopLeftRadius: theme.radius.sheet,
-              borderTopRightRadius: theme.radius.sheet,
-              borderTopWidth: 1,
-              bottom: 0,
-              left: side,
-              maxHeight: '92%',
-              paddingBottom: 20 + insets.bottom,
-              paddingHorizontal: 20,
-              paddingTop: 10,
-              position: 'absolute',
-              right: side,
-            }}
-          >
-            <View style={{ alignSelf: 'center', backgroundColor: theme.border, borderRadius: 3, height: 5, marginBottom: 14, width: 40 }} />
-            <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 18 }}>
-              <View style={{ flex: 1, gap: 2, paddingRight: 12 }}>
-                <AppText style={{ fontFamily: theme.font.extrabold, fontSize: 22 }}>{title}</AppText>
-                {subtitle ? <AppText color={theme.muted} style={{ fontFamily: theme.font.semibold, fontSize: 14 }}>{subtitle}</AppText> : null}
-              </View>
-              <IconButton icon="x" label="Close" onPress={onClose} />
+    <NativeBottomSheet
+      containerColor={theme.card}
+      contentPadding={{ top: 24, bottom: 16, left: 16, right: 16 }}
+      isPresented={visible}
+      onDismiss={onClose}
+      snapPoints={['half', 'full']}
+    >
+      <RNHostView>
+        <View style={{ flex: 1, gap: 18 }}>
+          <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ flex: 1, gap: 6, paddingRight: 12 }}>
+              <AppText style={{ fontFamily: theme.font.extrabold, fontSize: 22 }}>{title}</AppText>
+              {subtitle ? <AppText color={theme.muted} style={{ fontFamily: theme.font.semibold, fontSize: 14 }}>{subtitle}</AppText> : null}
             </View>
-            <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-              <View style={{ gap: 18 }}>{children}</View>
-            </ScrollView>
+            <IconButton icon="x" label="Close" onPress={onClose} />
           </View>
+          <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+            <View style={{ gap: 18 }}>{children}</View>
+          </ScrollView>
         </View>
-      </KeyboardAvoidingView>
-    </Modal>
+      </RNHostView>
+    </NativeBottomSheet>
   );
 }
 

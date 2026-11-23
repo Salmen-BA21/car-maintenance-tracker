@@ -73,13 +73,15 @@ export function PartConfigScreen({ carId, partId, carName, onDone }: { carId?: s
       showsVerticalScrollIndicator={false}
       style={{ flex: 1 }}
     >
-      <PageHeader
-        backLabel={editing ? 'Dashboard' : undefined}
-        eyebrow={carName ?? 'Your garage'}
-        onBack={editing ? onDone : undefined}
-        subtitle={editing ? 'Change the name or how this part falls due.' : 'Track something outside the default maintenance list.'}
-        title={editing ? 'Edit part' : 'Add a part'}
-      />
+      {editing ? (
+        <AppText variant="eyebrow">{carName ?? 'Your garage'}</AppText>
+      ) : (
+        <PageHeader
+          eyebrow={carName ?? 'Your garage'}
+          subtitle="Track something outside the default maintenance list."
+          title="Add a part"
+        />
+      )}
 
       <TextField accessibilityLabel="Part name" autoCapitalize="words" label="Part name" onChangeText={setName} placeholder="e.g. AC belt" value={name} />
 

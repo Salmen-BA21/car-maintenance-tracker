@@ -1,3 +1,4 @@
+import { Stack } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, FlatList, View } from 'react-native';
@@ -5,14 +6,14 @@ import { Alert, FlatList, View } from 'react-native';
 import { addInspection, addServiceRecord, deleteCustomPart, deleteServiceRecord, getAppSettings, getPartDetail, setPartAlerts, setPartHidden, updateServiceRecord, type PartDetail } from '../data/repositories/car-repository';
 import { daysBetween, jsDateToLocalDate } from '../domain/local-date';
 import { afterWrite } from '../notifications/notification-service';
-import { AppText, BottomSheet, Button, Card, IconButton, InlineError, PageHeader, ProgressBar, StatusPill, TextField, Toggle } from '../ui/kit';
+import { AppText, BottomSheet, Button, Card, IconButton, InlineError, ProgressBar, StatusPill, TextField, Toggle } from '../ui/kit';
 import { formatDate, partProgress, statusTone } from '../ui/part-view';
 import { useTheme } from '../ui/theme';
 
 type Database = ReturnType<typeof useSQLiteContext>;
 type ServiceRecord = PartDetail['history'][number];
 
-export function PartDetailScreen({ partId, onBack, onEdit }: { partId: string; onBack: () => void; onEdit: () => void }) {
+export function PartDetailScreen({ partId, onBack, onEdit }: { partId: string; onBack: () => void; onEdit: (carName: string) => void }) {
   const db = useSQLiteContext();
   const theme = useTheme();
   const [detail, setDetail] = useState<PartDetail | null>(null);
@@ -190,18 +191,14 @@ export function PartDetailScreen({ partId, onBack, onEdit }: { partId: string; o
         keyExtractor={(record) => record.id}
         ListHeaderComponent={
           <View style={{ gap: 14 }}>
-            <PageHeader
-              backLabel="Dashboard"
-              eyebrow={`${part.categoryName} · ${detail.carName}`}
-              onBack={onBack}
-              title={part.name}
-            />
+            <Stack.Screen options={{ title: part.name }} />
+            <AppText variant="eyebrow">{`${part.categoryName} · ${detail.carName}`}</AppText>
 
             <PartActions
               configuring={configuring}
               deleting={deleting}
               onDelete={() => void removeCustomPart()}
-              onEdit={onEdit}
+              onEdit={() => onEdit(detail.carName)}
               onHide={() => void hidePart()}
               part={part}
             />

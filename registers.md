@@ -48,6 +48,7 @@ Approved by the owner on 2026-11-01 unless marked otherwise. IDs are kept (no re
 | OQ-16 | Email confirmation on sign-up: required in production, disabled in development? | Owner, before S-01 |
 | OQ-17 | Crash reporting: none in Release 1 (D-67), or a development-only Sentry project? | Deployment (12) |
 | OQ-18 | Keep `select` grants on the synced tables for the security-invoker `pull_rows`, or revoke them and make `pull_rows` security-definer with an explicit `user_id` filter? The second shrinks the surface but moves the ownership check into the function. | Security (09) |
+| OQ-19 | R1a iOS preview currently uses Expo Go with a published EAS Update. This conflicts with D-18/D-111 (sideloaded IPA), D-69 (IPA signing routine) and D-54/NFR-042 (no Expo Go). Keep Expo Go only as an interim R1a test path, or formally supersede those decisions before R1b? | Owner, before R1b or first store-facing build |
 
 ## 6. Spike S-01 (one day, gate before the main build)
 

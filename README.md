@@ -1,6 +1,6 @@
 # Car Maintenance Tracker: Project Documentation
 
-Working title (see OQ-05). Documentation language: English (D-20). Version 1.6, last updated 2026-11-01.
+Working title (see OQ-05). Documentation language: English (D-20). Version 1.8, last updated 2026-11-23.
 
 ## 1. Project overview
 
@@ -21,9 +21,9 @@ A mobile app (Android and iOS, React Native/Expo) that tracks the maintenance of
 | 09 | Security Requirements Document | docs/08-security | Not started |
 | 10 | Project Development Roadmap | docs/09-project-planning | Not started |
 | 11 | Testing and QA Plan | docs/10-testing | Not started |
-| 12 | Deployment and Maintenance Plan | docs/11-deployment-maintenance | Not started |
+| 12 | [Deployment and Maintenance Plan](docs/11-deployment-maintenance/12-deployment-maintenance.md) | docs/11-deployment-maintenance | Draft v0.1 |
 
-Planned writing order: 08 API and 09 Security, then 04 UI/UX, then 10 to 12.
+Planned writing order: 08 API and 09 Security, then 04 UI/UX, then 10 and 11. Document 12 currently holds the R1a personal-preview runbook only (OQ-19).
 
 Numbering note: document numbers 01 to 12 are the reading order and appear in every file name. The folders come from the 11-folder template, so document 05 (TRD) sits in `docs/03-technical-specifications`, 06 (Architecture) in `docs/05-architecture`, and documents 07 to 12 one folder lower: 07 in `docs/06-database`, 08 in `docs/07-api`, 09 in `docs/08-security`, 10 in `docs/09-project-planning`, 11 in `docs/10-testing`, 12 in `docs/11-deployment-maintenance`. Every link is relative: keep the folder structure intact (clone the whole repository, not single files).
 

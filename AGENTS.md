@@ -2,7 +2,7 @@
 
 Car Maintenance Tracker (working title): React Native + Expo mobile app that tracks petrol/diesel car maintenance from odometer readings. Local-first (SQLite), optional Supabase backup and sync. Personal use first, public product later.
 
-Status: local-only MVP implementation exists in `app/`; account/sync remains deferred. Docs 01-03, 05-08 approved; 04 (UI/UX) is a draft; 09-12 are not started. Docs are in English.
+Status: local-only MVP implementation exists in `app/`; account/sync remains deferred. Docs 01-03, 05-08 approved; 04 (UI/UX) and 12 (deployment) are drafts; 09-11 are not started. Docs are in English.
 
 ## Rules for agents
 
@@ -44,4 +44,4 @@ TypeScript strict, React Native + Expo (dev builds), Expo Router, `expo-sqlite` 
 | Why something was decided | the `*decisions*` part of that doc, or `decisions.md` |
 | Open questions, risks, spike S-01 | `registers.md` |
 
-`UI/UX`, security, roadmap, testing and deployment docs (04, 09-12) do not exist yet.
+`UI/UX`, security, roadmap and testing docs (04, 09-11) do not exist yet. Document 12 is a draft runbook in `docs/11-deployment-maintenance/`.

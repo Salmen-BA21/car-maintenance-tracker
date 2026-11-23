@@ -10,7 +10,9 @@
     "ios": {
       "bundleIdentifier": "com.salmen.carmaintenance",
       "supportsTablet": false,
-      "infoPlist": {}
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.salmen.carmaintenance",

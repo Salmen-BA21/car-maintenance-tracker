@@ -1,10 +1,23 @@
-name: Verify and Build Expo App
+name: Verify and Release Expo App
 
 on:
   push:
     branches: [main]
-    tags: ['v*']
   pull_request:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: What should this run do?
+        type: choice
+        options: [update, build]
+        default: update
+        required: true
+      environment:
+        description: Expo environment for the manual run
+        type: choice
+        options: [preview, production]
+        default: preview
+        required: true
 
 defaults:
   run:
@@ -24,21 +37,21 @@ jobs:
       - run: npm run typecheck
       - run: npm test -- --runInBand
       - uses: expo/expo-github-action@v8
-        if: github.event_name == 'push'
+        if: github.event_name != 'pull_request'
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Build Android app
-        if: github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch' && inputs.action == 'build'
         env:
-          BUILD_PROFILE: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'preview' }}
+          BUILD_PROFILE: ${{ inputs.environment }}
         run: eas build --platform android --profile "$BUILD_PROFILE" --non-interactive
 
       - name: Publish Expo update
-        if: github.event_name == 'push'
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.action == 'update')
         env:
-          CHANNEL: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'preview' }}
-          ENVIRONMENT: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'preview' }}
-          MSG: ${{ github.event.head_commit.message || github.ref_name }}
+          CHANNEL: ${{ github.event_name == 'push' && 'preview' || inputs.environment }}
+          ENVIRONMENT: ${{ github.event_name == 'push' && 'preview' || inputs.environment }}
+          MSG: ${{ github.event.head_commit.message || 'Manual Expo update' }}
         run: eas update --channel "$CHANNEL" --environment "$ENVIRONMENT" --platform all --non-interactive --message "$MSG"

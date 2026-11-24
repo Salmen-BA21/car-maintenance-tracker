@@ -2,3 +2,4 @@
 .agents
 /branding
 .vscode/
+.env

@@ -36,7 +36,7 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npm run typecheck
       - run: npm test -- --runInBand
-      - uses: expo/expo-github-action@v8
+      - uses: expo/expo-github-action@v9
         if: github.event_name != 'pull_request'
         with:
           eas-version: latest

@@ -4,6 +4,7 @@ updates:
     directory: /app
     schedule:
       interval: weekly
+    open-pull-requests-limit: 5
     groups:
       expo-sdk:
         patterns:
@@ -17,8 +18,21 @@ updates:
         update-types:
           - patch
           - minor
+      npm-patch-minor:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - typescript
+          - eslint
+        update-types:
+          - patch
+          - minor
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"

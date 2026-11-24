@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <mask id="wrench-cutouts" maskUnits="userSpaceOnUse" x="-240" y="-90" width="460" height="180">
+      <rect x="-240" y="-90" width="460" height="180" fill="#fff"/>
+      <rect x="118" y="-25" width="62" height="50" fill="#000"/>
+      <circle cx="-165" cy="0" r="14" fill="#000"/>
+    </mask>
+  </defs>
+  <g transform="translate(0 8)">
+    <g transform="translate(256 232) rotate(-35)">
+      <g fill="#F7A98C" mask="url(#wrench-cutouts)">
+        <rect x="-165" y="-19" width="270" height="38" rx="19"/>
+        <circle cx="105" r="58"/>
+        <circle cx="-165" r="36"/>
+      </g>
+    </g>
+    <g transform="translate(136 282)">
+      <path d="M0 70V52q0-8 10-10l30-6 30-28q4-6 12-6h68q8 0 14 6l28 26 34 6q14 2 14 14v16q0 8-8 8H8q-8 0-8-8Z" fill="#fff" stroke="#C8320F" stroke-width="14" stroke-linejoin="round" paint-order="stroke"/>
+      <path d="m54 34 22-22h24v22Zm56-22h38l22 22h-60Z" fill="#C8320F"/>
+      <circle cx="56" cy="80" r="21" fill="#fff" stroke="#C8320F" stroke-width="12" paint-order="stroke"/>
+      <circle cx="56" cy="80" r="8" fill="#C8320F"/>
+      <circle cx="184" cy="80" r="21" fill="#fff" stroke="#C8320F" stroke-width="12" paint-order="stroke"/>
+      <circle cx="184" cy="80" r="8" fill="#C8320F"/>
+    </g>
+  </g>
+</svg>

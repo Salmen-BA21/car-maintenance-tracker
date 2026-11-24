@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#C8320F"/>
+  <g transform="translate(0 8)">
+    <g transform="translate(256 232) rotate(-35)">
+      <rect x="-165" y="-19" width="270" height="38" rx="19" fill="#F7A98C"/>
+      <circle cx="105" r="58" fill="#F7A98C"/>
+      <rect x="118" y="-24" width="62" height="48" fill="#C8320F"/>
+      <circle cx="-165" r="36" fill="#F7A98C"/>
+      <circle cx="-165" r="14" fill="#C8320F"/>
+    </g>
+    <g transform="translate(136 282)">
+      <path d="M0 70V52q0-8 10-10l30-6 30-28q4-6 12-6h68q8 0 14 6l28 26 34 6q14 2 14 14v16q0 8-8 8H8q-8 0-8-8Z" fill="#fff" stroke="#C8320F" stroke-width="14" stroke-linejoin="round" paint-order="stroke"/>
+      <path d="m54 34 22-22h24v22Zm56-22h38l22 22h-60Z" fill="#C8320F"/>
+      <circle cx="56" cy="80" r="21" fill="#fff" stroke="#C8320F" stroke-width="12" paint-order="stroke"/>
+      <circle cx="56" cy="80" r="8" fill="#C8320F"/>
+      <circle cx="184" cy="80" r="21" fill="#fff" stroke="#C8320F" stroke-width="12" paint-order="stroke"/>
+      <circle cx="184" cy="80" r="8" fill="#C8320F"/>
+    </g>
+  </g>
+</svg>
